@@ -17,6 +17,7 @@ import {
   calculateTransformerLoads,
   calculateZoneLoads,
 } from "@/features/transformers/load-calculations";
+import { calculatePlanningSummary } from "@/features/transformers/planning-summary";
 import { TransformerForm } from "@/features/transformers/transformer-form";
 import {
   deleteTransformer,
@@ -62,6 +63,10 @@ export default async function QuoteDetailPage({
 
   const zoneLoads = calculateZoneLoads(zones, quoteItems);
   const transformerLoads = calculateTransformerLoads(transformers, zoneLoads);
+  const planningSummary = calculatePlanningSummary(
+    zoneLoads,
+    transformerLoads,
+  );
 
   async function updateQuoteAction(formData: FormData) {
     "use server";
@@ -341,6 +346,49 @@ export default async function QuoteDetailPage({
           </section>
 
           <section className="rounded-2xl border bg-white p-4 shadow-sm">
+            <h2 className="mb-4 font-medium">Electrical Planning Summary</h2>
+
+            <div className="space-y-2 text-sm">
+              <div
+                className={
+                  planningSummary.isSystemSafe
+                    ? "rounded-lg bg-green-50 px-3 py-2 text-green-700"
+                    : "rounded-lg bg-yellow-50 px-3 py-2 text-yellow-700"
+                }
+              >
+                {planningSummary.isSystemSafe
+                  ? "System looks safe."
+                  : "Review needed before final quote."}
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Total System Load</span>
+                <span>{planningSummary.totalSystemWatts.toFixed(2)}W</span>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Assigned Load</span>
+                <span>{planningSummary.assignedWatts.toFixed(2)}W</span>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Unassigned Load</span>
+                <span>{planningSummary.unassignedWatts.toFixed(2)}W</span>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Unassigned Zones</span>
+                <span>{planningSummary.unassignedZoneCount}</span>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Load Warnings</span>
+                <span>{planningSummary.warningCount}</span>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border bg-white p-4 shadow-sm">
             <h2 className="mb-4 font-medium">Internal Profit Preview</h2>
 
             <div className="space-y-2 text-sm">
@@ -377,8 +425,8 @@ export default async function QuoteDetailPage({
 
             <div className="mt-6 border-t pt-6 text-sm text-neutral-600">
               <p>
-                Zones, catalog items, quote totals, and transformer load planning
-                are now active.
+                Zones, catalog items, quote totals, transformer assignment, and
+                electrical planning summaries are now active.
               </p>
             </div>
           </section>
