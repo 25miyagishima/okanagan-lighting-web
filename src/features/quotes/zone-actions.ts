@@ -168,3 +168,41 @@ export async function deleteZone(zoneId: string, quoteId: string) {
     success: true,
   };
 }
+
+export async function assignZoneTransformer(
+  zoneId: string,
+  quoteId: string,
+  formData: FormData,
+) {
+  const supabase = await createClient();
+
+  const transformerIdValue = String(
+    formData.get("transformerId") ?? "",
+  ).trim();
+
+  const transformerId =
+    transformerIdValue === "none" || transformerIdValue === ""
+      ? null
+      : transformerIdValue;
+
+  const { error } = await supabase
+    .from("zones")
+    .update({
+      transformer_id: transformerId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", zoneId)
+    .eq("quote_id", quoteId);
+
+  if (error) {
+    return {
+      error: error.message,
+    };
+  }
+
+  revalidatePath(`/quotes/${quoteId}`);
+
+  return {
+    success: true,
+  };
+}

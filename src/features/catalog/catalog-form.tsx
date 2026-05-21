@@ -89,7 +89,7 @@ export function CatalogForm() {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <div>
           <label htmlFor="cost" className="text-sm font-medium">
             Cost
@@ -97,6 +97,20 @@ export function CatalogForm() {
           <input
             id="cost"
             name="cost"
+            type="number"
+            step="0.01"
+            defaultValue="0"
+            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="wattage" className="text-sm font-medium">
+            Wattage
+          </label>
+          <input
+            id="wattage"
+            name="wattage"
             type="number"
             step="0.01"
             defaultValue="0"
@@ -132,7 +146,7 @@ export function CatalogForm() {
           />
         </div>
       </div>
-
+      
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label htmlFor="category" className="text-sm font-medium">

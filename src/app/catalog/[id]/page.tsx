@@ -133,11 +133,12 @@ export default async function CatalogItemDetailPage({
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-4">
               <div>
                 <label htmlFor="cost" className="text-sm font-medium">
                   Cost
                 </label>
+
                 <input
                   id="cost"
                   name="cost"
@@ -149,9 +150,28 @@ export default async function CatalogItemDetailPage({
               </div>
 
               <div>
-                <label htmlFor="markupPercent" className="text-sm font-medium">
+                <label htmlFor="wattage" className="text-sm font-medium">
+                  Wattage
+                </label>
+
+                <input
+                  id="wattage"
+                  name="wattage"
+                  type="number"
+                  step="0.01"
+                  defaultValue={item.wattage}
+                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="markupPercent"
+                  className="text-sm font-medium"
+                >
                   Markup %
                 </label>
+
                 <input
                   id="markupPercent"
                   name="markupPercent"
@@ -163,9 +183,13 @@ export default async function CatalogItemDetailPage({
               </div>
 
               <div>
-                <label htmlFor="packQuantity" className="text-sm font-medium">
+                <label
+                  htmlFor="packQuantity"
+                  className="text-sm font-medium"
+                >
                   Pack Quantity
                 </label>
+
                 <input
                   id="packQuantity"
                   name="packQuantity"
@@ -176,7 +200,7 @@ export default async function CatalogItemDetailPage({
                 />
               </div>
             </div>
-
+            
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label htmlFor="category" className="text-sm font-medium">

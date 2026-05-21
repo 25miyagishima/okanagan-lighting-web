@@ -17,6 +17,7 @@ type QuoteItemRow = {
   supplier_link_snapshot: string | null;
   sku_or_asin_snapshot: string | null;
   cost_snapshot: number;
+  wattage_snapshot: number;
   markup_percent_snapshot: number;
   sell_price_snapshot: number;
   category_snapshot: string;
@@ -37,6 +38,7 @@ type CatalogSnapshotRow = {
   supplier_link: string | null;
   sku_or_asin: string | null;
   cost: number;
+  wattage: number;
   markup_percent: number;
   category: string;
   quote_group: QuoteItemGroup;
@@ -62,6 +64,7 @@ function mapQuoteItemRow(row: QuoteItemRow): QuoteItem {
     supplierLinkSnapshot: row.supplier_link_snapshot,
     skuOrAsinSnapshot: row.sku_or_asin_snapshot,
     costSnapshot: Number(row.cost_snapshot),
+    wattageSnapshot: Number(row.wattage_snapshot),
     markupPercentSnapshot: Number(row.markup_percent_snapshot),
     sellPriceSnapshot: Number(row.sell_price_snapshot),
     categorySnapshot: row.category_snapshot,
@@ -83,7 +86,7 @@ export async function getQuoteItemsByQuoteId(
   const { data, error } = await supabase
     .from("quote_items")
     .select(
-      "id, quote_id, zone_id, catalog_item_id, quantity, name_snapshot, brand_snapshot, supplier_snapshot, supplier_link_snapshot, sku_or_asin_snapshot, cost_snapshot, markup_percent_snapshot, sell_price_snapshot, category_snapshot, quote_group_snapshot, pack_quantity_snapshot, unit_type_snapshot, taxable_snapshot, notes, created_at, updated_at",
+      "id, quote_id, zone_id, catalog_item_id, quantity, name_snapshot, brand_snapshot, supplier_snapshot, supplier_link_snapshot, sku_or_asin_snapshot, cost_snapshot, wattage_snapshot, markup_percent_snapshot, sell_price_snapshot, category_snapshot, quote_group_snapshot, pack_quantity_snapshot, unit_type_snapshot, taxable_snapshot, notes, created_at, updated_at",
     )
     .eq("quote_id", quoteId)
     .order("created_at", { ascending: true });
@@ -118,7 +121,7 @@ export async function addCatalogItemToZone(
   const { data: catalogItem, error: catalogError } = await supabase
     .from("catalog_items")
     .select(
-      "id, name, brand, supplier, supplier_link, sku_or_asin, cost, markup_percent, category, quote_group, pack_quantity, unit_type, taxable",
+      "id, name, brand, supplier, supplier_link, sku_or_asin, cost, wattage, markup_percent, category, quote_group, pack_quantity, unit_type, taxable",
     )
     .eq("id", catalogItemId)
     .eq("active", true)
@@ -147,6 +150,7 @@ export async function addCatalogItemToZone(
     supplier_link_snapshot: item.supplier_link,
     sku_or_asin_snapshot: item.sku_or_asin,
     cost_snapshot: item.cost,
+    wattage_snapshot: item.wattage,
     markup_percent_snapshot: item.markup_percent,
     sell_price_snapshot: sellPrice,
     category_snapshot: item.category,

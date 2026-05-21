@@ -11,7 +11,17 @@ import { getQuoteItemsByQuoteId } from "@/features/quotes/quote-item-actions";
 import { calculateQuoteTotals } from "@/features/quotes/quote-totals";
 import { ZoneForm } from "@/features/quotes/zone-form";
 import { ZoneItemForm } from "@/features/quotes/zone-item-form";
+import { ZoneTransformerForm } from "@/features/quotes/zone-transformer-form";
 import { getZonesByQuoteId } from "@/features/quotes/zone-actions";
+import {
+  calculateTransformerLoads,
+  calculateZoneLoads,
+} from "@/features/transformers/load-calculations";
+import { TransformerForm } from "@/features/transformers/transformer-form";
+import {
+  deleteTransformer,
+  getTransformersByQuoteId,
+} from "@/features/transformers/transformer-actions";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 
 type QuoteDetailPageProps = {
@@ -29,6 +39,7 @@ export default async function QuoteDetailPage({
   const zones = await getZonesByQuoteId(id);
   const catalogItems = await getCatalogItems();
   const quoteItems = await getQuoteItemsByQuoteId(id);
+  const transformers = await getTransformersByQuoteId(id);
 
   if (!quote) {
     notFound();
@@ -49,6 +60,9 @@ export default async function QuoteDetailPage({
     labourTaxable: false,
   });
 
+  const zoneLoads = calculateZoneLoads(zones, quoteItems);
+  const transformerLoads = calculateTransformerLoads(transformers, zoneLoads);
+
   async function updateQuoteAction(formData: FormData) {
     "use server";
 
@@ -59,6 +73,18 @@ export default async function QuoteDetailPage({
     "use server";
 
     await archiveQuote(id);
+  }
+
+  async function deleteTransformerAction(formData: FormData) {
+    "use server";
+
+    const transformerId = String(formData.get("transformerId") ?? "");
+
+    if (!transformerId) {
+      return;
+    }
+
+    await deleteTransformer(transformerId, id);
   }
 
   return (
@@ -351,12 +377,101 @@ export default async function QuoteDetailPage({
 
             <div className="mt-6 border-t pt-6 text-sm text-neutral-600">
               <p>
-                Zones, catalog items, and quote totals are active. Transformer
-                planning begins after totals are stable.
+                Zones, catalog items, quote totals, and transformer load planning
+                are now active.
               </p>
             </div>
           </section>
         </aside>
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-[420px_1fr]">
+        <TransformerForm quoteId={quote.id} />
+
+        <section className="rounded-2xl border bg-white p-4 shadow-sm">
+          <h2 className="mb-4 font-medium">Transformers</h2>
+
+          {transformers.length === 0 ? (
+            <p className="text-sm text-neutral-600">
+              No transformers added yet. Add your first transformer to begin
+              electrical load planning.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {transformers.map((transformer) => {
+                const load = transformerLoads.find(
+                  (summary) => summary.transformerId === transformer.id,
+                );
+
+                const assignedWatts = load?.assignedWatts ?? 0;
+                const remainingSafeWatts = load?.remainingSafeWatts ?? 0;
+                const safePercent = load?.loadPercentOfSafeCapacity ?? 0;
+                const overSafe = load?.isOverSafeLoad ?? false;
+                const overCapacity = load?.isOverCapacity ?? false;
+
+                return (
+                  <div key={transformer.id} className="rounded-xl border p-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium">{transformer.name}</p>
+
+                        <p className="text-sm text-neutral-600">
+                          {transformer.capacityWatts}W · {transformer.voltage}V
+                        </p>
+
+                        {transformer.locationNote ? (
+                          <p className="mt-1 text-xs text-neutral-500">
+                            {transformer.locationNote}
+                          </p>
+                        ) : null}
+                      </div>
+
+                      <div className="text-right text-xs text-neutral-700">
+                        <p>Assigned: {assignedWatts.toFixed(2)}W</p>
+                        <p>
+                          Safe Load: {transformer.maxRecommendedLoadWatts}W
+                        </p>
+                        <p>Remaining: {remainingSafeWatts.toFixed(2)}W</p>
+                        <p>{safePercent.toFixed(0)}% of safe load</p>
+                      </div>
+                    </div>
+
+                    {overCapacity ? (
+                      <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+                        Over transformer capacity. Reduce load or add another
+                        transformer.
+                      </p>
+                    ) : overSafe ? (
+                      <p className="mt-3 rounded-lg bg-yellow-50 px-3 py-2 text-xs text-yellow-700">
+                        Over recommended 80% safe load. Consider redistributing
+                        zones.
+                      </p>
+                    ) : (
+                      <p className="mt-3 rounded-lg bg-green-50 px-3 py-2 text-xs text-green-700">
+                        Within recommended safe load.
+                      </p>
+                    )}
+
+                    <form action={deleteTransformerAction} className="mt-3">
+                      <input
+                        type="hidden"
+                        name="transformerId"
+                        value={transformer.id}
+                      />
+
+                      <button
+                        type="submit"
+                        className="w-full rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-100"
+                      >
+                        Delete Transformer
+                      </button>
+                    </form>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[420px_1fr]">
@@ -376,6 +491,10 @@ export default async function QuoteDetailPage({
                   (total) => total.zoneId === zone.id,
                 );
 
+                const zoneLoad = zoneLoads.find(
+                  (load) => load.zoneId === zone.id,
+                );
+
                 const zoneItems = quoteItems.filter(
                   (item) => item.zoneId === zone.id,
                 );
@@ -389,6 +508,27 @@ export default async function QuoteDetailPage({
                         <p className="text-sm text-neutral-600">
                           {zone.wireLengthFeet} ft wire · {zone.labourHours} hrs
                         </p>
+
+                        <p className="mt-1 text-xs text-neutral-500">
+                          Load: {(zoneLoad?.totalWatts ?? 0).toFixed(2)}W
+                        </p>
+
+                        {zone.transformerId ? (
+                          <p className="mt-1 text-xs text-neutral-500">
+                            Transformer assigned
+                          </p>
+                        ) : (
+                          <p className="mt-1 text-xs text-yellow-700">
+                            No transformer assigned
+                          </p>
+                        )}
+
+                        <ZoneTransformerForm
+                          quoteId={quote.id}
+                          zoneId={zone.id}
+                          currentTransformerId={zone.transformerId}
+                          transformers={transformers}
+                        />
                       </div>
 
                       <div className="text-right text-xs text-neutral-700">
@@ -431,6 +571,9 @@ export default async function QuoteDetailPage({
                             const itemTotal =
                               item.quantity * item.sellPriceSnapshot;
 
+                            const itemWatts =
+                              item.quantity * item.wattageSnapshot;
+
                             return (
                               <div
                                 key={item.id}
@@ -445,6 +588,10 @@ export default async function QuoteDetailPage({
                                     <p className="text-xs text-neutral-600">
                                       {item.quoteGroupSnapshot} · Qty{" "}
                                       {item.quantity}
+                                    </p>
+
+                                    <p className="text-xs text-neutral-500">
+                                      Load: {itemWatts.toFixed(2)}W
                                     </p>
                                   </div>
 

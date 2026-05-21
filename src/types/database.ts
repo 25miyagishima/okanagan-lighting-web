@@ -43,6 +43,7 @@ export type CatalogItem = {
   supplierLink: string | null;
   skuOrAsin: string | null;
   cost: number;
+  wattage: number;
   markupPercent: number;
   packQuantity: number;
   category: string;
@@ -58,7 +59,6 @@ export type CatalogItem = {
   updatedAt: string;
   archivedAt: string | null;
 };
-
 export type Quote = {
   id: string;
   clientId: string;
@@ -106,13 +106,13 @@ export type QuoteItem = {
   zoneId: string | null;
   catalogItemId: string | null;
   quantity: number;
-
   nameSnapshot: string;
   brandSnapshot: string | null;
   supplierSnapshot: string | null;
   supplierLinkSnapshot: string | null;
   skuOrAsinSnapshot: string | null;
   costSnapshot: number;
+  wattageSnapshot: number;
   markupPercentSnapshot: number;
   sellPriceSnapshot: number;
   categorySnapshot: string;
@@ -120,7 +120,6 @@ export type QuoteItem = {
   packQuantitySnapshot: number;
   unitTypeSnapshot: CatalogUnitType;
   taxableSnapshot: boolean;
-
   notes: string | null;
   createdAt: string;
   updatedAt: string;
@@ -133,6 +132,18 @@ export type QuoteTransformer = {
   nameSnapshot: string;
   capacityWatts: number;
   notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Transformer = {
+  id: string;
+  quoteId: string;
+  name: string;
+  capacityWatts: number;
+  voltage: number;
+  maxRecommendedLoadWatts: number;
+  locationNote: string | null;
   createdAt: string;
   updatedAt: string;
 };

@@ -17,6 +17,7 @@ type CatalogRow = {
   supplier_link: string | null;
   sku_or_asin: string | null;
   cost: number;
+  wattage: number;
   markup_percent: number;
   pack_quantity: number;
   category: string;
@@ -33,6 +34,9 @@ type CatalogRow = {
   archived_at: string | null;
 };
 
+const catalogSelect =
+  "id, name, brand, supplier, supplier_link, sku_or_asin, cost, wattage, markup_percent, pack_quantity, category, quote_group, install_type, unit_type, taxable, default_quantity, favourite, active, notes, created_at, updated_at, archived_at";
+
 function mapCatalogRow(row: CatalogRow): CatalogItem {
   return {
     id: row.id,
@@ -42,6 +46,7 @@ function mapCatalogRow(row: CatalogRow): CatalogItem {
     supplierLink: row.supplier_link,
     skuOrAsin: row.sku_or_asin,
     cost: Number(row.cost),
+    wattage: Number(row.wattage),
     markupPercent: Number(row.markup_percent),
     packQuantity: Number(row.pack_quantity),
     category: row.category,
@@ -64,9 +69,7 @@ export async function getCatalogItems(): Promise<CatalogItem[]> {
 
   const { data, error } = await supabase
     .from("catalog_items")
-    .select(
-      "id, name, brand, supplier, supplier_link, sku_or_asin, cost, markup_percent, pack_quantity, category, quote_group, install_type, unit_type, taxable, default_quantity, favourite, active, notes, created_at, updated_at, archived_at"
-    )
+    .select(catalogSelect)
     .order("created_at", { ascending: false });
 
   if (error || !data) {
@@ -83,9 +86,7 @@ export async function getCatalogItemById(
 
   const { data, error } = await supabase
     .from("catalog_items")
-    .select(
-      "id, name, brand, supplier, supplier_link, sku_or_asin, cost, markup_percent, pack_quantity, category, quote_group, install_type, unit_type, taxable, default_quantity, favourite, active, notes, created_at, updated_at, archived_at"
-    )
+    .select(catalogSelect)
     .eq("id", id)
     .single();
 
@@ -103,12 +104,19 @@ function getCatalogFormValues(formData: FormData) {
   const supplierLink = String(formData.get("supplierLink") ?? "").trim();
   const skuOrAsin = String(formData.get("skuOrAsin") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim();
-  const quoteGroup = String(formData.get("quoteGroup") ?? "materials") as QuoteItemGroup;
-  const installType = String(formData.get("installType") ?? "both") as CatalogInstallType;
-  const unitType = String(formData.get("unitType") ?? "each") as CatalogUnitType;
+  const quoteGroup = String(
+    formData.get("quoteGroup") ?? "materials",
+  ) as QuoteItemGroup;
+  const installType = String(
+    formData.get("installType") ?? "both",
+  ) as CatalogInstallType;
+  const unitType = String(
+    formData.get("unitType") ?? "each",
+  ) as CatalogUnitType;
   const notes = String(formData.get("notes") ?? "").trim();
 
   const cost = Number(formData.get("cost") ?? 0);
+  const wattage = Number(formData.get("wattage") ?? 0);
   const markupPercent = Number(formData.get("markupPercent") ?? 0);
   const packQuantity = Number(formData.get("packQuantity") ?? 1);
   const defaultQuantity = Number(formData.get("defaultQuantity") ?? 1);
@@ -123,8 +131,10 @@ function getCatalogFormValues(formData: FormData) {
     supplierLink,
     skuOrAsin,
     cost: Number.isFinite(cost) ? cost : 0,
+    wattage: Number.isFinite(wattage) ? wattage : 0,
     markupPercent: Number.isFinite(markupPercent) ? markupPercent : 0,
-    packQuantity: Number.isFinite(packQuantity) && packQuantity > 0 ? packQuantity : 1,
+    packQuantity:
+      Number.isFinite(packQuantity) && packQuantity > 0 ? packQuantity : 1,
     category,
     quoteGroup,
     installType,
@@ -144,15 +154,11 @@ export async function createCatalogItem(formData: FormData) {
   const values = getCatalogFormValues(formData);
 
   if (!values.name) {
-    return {
-      error: "Product name is required.",
-    };
+    return { error: "Product name is required." };
   }
 
   if (!values.category) {
-    return {
-      error: "Category is required.",
-    };
+    return { error: "Category is required." };
   }
 
   const { error } = await supabase.from("catalog_items").insert({
@@ -162,6 +168,7 @@ export async function createCatalogItem(formData: FormData) {
     supplier_link: values.supplierLink || null,
     sku_or_asin: values.skuOrAsin || null,
     cost: values.cost,
+    wattage: values.wattage,
     markup_percent: values.markupPercent,
     pack_quantity: values.packQuantity,
     category: values.category,
@@ -176,17 +183,13 @@ export async function createCatalogItem(formData: FormData) {
   });
 
   if (error) {
-    return {
-      error: error.message,
-    };
+    return { error: error.message };
   }
 
   revalidatePath("/catalog");
   revalidatePath("/dashboard");
 
-  return {
-    success: true,
-  };
+  return { success: true };
 }
 
 export async function updateCatalogItem(id: string, formData: FormData) {
@@ -194,15 +197,11 @@ export async function updateCatalogItem(id: string, formData: FormData) {
   const values = getCatalogFormValues(formData);
 
   if (!values.name) {
-    return {
-      error: "Product name is required.",
-    };
+    return { error: "Product name is required." };
   }
 
   if (!values.category) {
-    return {
-      error: "Category is required.",
-    };
+    return { error: "Category is required." };
   }
 
   const { error } = await supabase
@@ -214,6 +213,7 @@ export async function updateCatalogItem(id: string, formData: FormData) {
       supplier_link: values.supplierLink || null,
       sku_or_asin: values.skuOrAsin || null,
       cost: values.cost,
+      wattage: values.wattage,
       markup_percent: values.markupPercent,
       pack_quantity: values.packQuantity,
       category: values.category,
@@ -229,17 +229,13 @@ export async function updateCatalogItem(id: string, formData: FormData) {
     .eq("id", id);
 
   if (error) {
-    return {
-      error: error.message,
-    };
+    return { error: error.message };
   }
 
   revalidatePath("/catalog");
   revalidatePath(`/catalog/${id}`);
 
-  return {
-    success: true,
-  };
+  return { success: true };
 }
 
 export async function archiveCatalogItem(id: string) {
@@ -255,17 +251,13 @@ export async function archiveCatalogItem(id: string) {
     .eq("id", id);
 
   if (error) {
-    return {
-      error: error.message,
-    };
+    return { error: error.message };
   }
 
   revalidatePath("/catalog");
   revalidatePath(`/catalog/${id}`);
 
-  return {
-    success: true,
-  };
+  return { success: true };
 }
 
 export async function restoreCatalogItem(id: string) {
@@ -281,15 +273,11 @@ export async function restoreCatalogItem(id: string) {
     .eq("id", id);
 
   if (error) {
-    return {
-      error: error.message,
-    };
+    return { error: error.message };
   }
 
   revalidatePath("/catalog");
   revalidatePath(`/catalog/${id}`);
 
-  return {
-    success: true,
-  };
+  return { success: true };
 }
