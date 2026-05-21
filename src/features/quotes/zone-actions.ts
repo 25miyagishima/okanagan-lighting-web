@@ -12,6 +12,7 @@ type ZoneRow = {
   wire_length_feet: number;
   selected_wire_catalog_item_id: string | null;
   transformer_id: string | null;
+  transformer_assignment_note: string | null;
   labour_hours: number;
   hourly_rate: number;
   client_notes: string | null;
@@ -20,6 +21,9 @@ type ZoneRow = {
   created_at: string;
   updated_at: string;
 };
+
+const zoneSelect =
+  "id, quote_id, name, sort_order, wire_length_feet, selected_wire_catalog_item_id, transformer_id, transformer_assignment_note, labour_hours, hourly_rate, client_notes, internal_notes, collapsed, created_at, updated_at";
 
 function mapZoneRow(row: ZoneRow): Zone {
   return {
@@ -30,6 +34,7 @@ function mapZoneRow(row: ZoneRow): Zone {
     wireLengthFeet: Number(row.wire_length_feet),
     selectedWireCatalogItemId: row.selected_wire_catalog_item_id,
     transformerId: row.transformer_id,
+    transformerAssignmentNote: row.transformer_assignment_note,
     labourHours: Number(row.labour_hours),
     hourlyRate: Number(row.hourly_rate),
     clientNotes: row.client_notes,
@@ -45,9 +50,7 @@ export async function getZonesByQuoteId(quoteId: string): Promise<Zone[]> {
 
   const { data, error } = await supabase
     .from("zones")
-    .select(
-      "id, quote_id, name, sort_order, wire_length_feet, selected_wire_catalog_item_id, transformer_id, labour_hours, hourly_rate, client_notes, internal_notes, collapsed, created_at, updated_at",
-    )
+    .select(zoneSelect)
     .eq("quote_id", quoteId)
     .order("sort_order", { ascending: true });
 
@@ -65,6 +68,9 @@ export async function createZone(quoteId: string, formData: FormData) {
   const wireLengthFeet = Number(formData.get("wireLengthFeet") ?? 0);
   const labourHours = Number(formData.get("labourHours") ?? 0);
   const hourlyRate = Number(formData.get("hourlyRate") ?? 100);
+  const transformerAssignmentNote = String(
+    formData.get("transformerAssignmentNote") ?? "",
+  ).trim();
   const clientNotes = String(formData.get("clientNotes") ?? "").trim();
   const internalNotes = String(formData.get("internalNotes") ?? "").trim();
 
@@ -86,6 +92,7 @@ export async function createZone(quoteId: string, formData: FormData) {
     wire_length_feet: Number.isFinite(wireLengthFeet) ? wireLengthFeet : 0,
     labour_hours: Number.isFinite(labourHours) ? labourHours : 0,
     hourly_rate: Number.isFinite(hourlyRate) ? hourlyRate : 100,
+    transformer_assignment_note: transformerAssignmentNote || null,
     client_notes: clientNotes || null,
     internal_notes: internalNotes || null,
     collapsed: true,
@@ -104,13 +111,20 @@ export async function createZone(quoteId: string, formData: FormData) {
   };
 }
 
-export async function updateZone(zoneId: string, quoteId: string, formData: FormData) {
+export async function updateZone(
+  zoneId: string,
+  quoteId: string,
+  formData: FormData,
+) {
   const supabase = await createClient();
 
   const name = String(formData.get("name") ?? "").trim();
   const wireLengthFeet = Number(formData.get("wireLengthFeet") ?? 0);
   const labourHours = Number(formData.get("labourHours") ?? 0);
   const hourlyRate = Number(formData.get("hourlyRate") ?? 100);
+  const transformerAssignmentNote = String(
+    formData.get("transformerAssignmentNote") ?? "",
+  ).trim();
   const clientNotes = String(formData.get("clientNotes") ?? "").trim();
   const internalNotes = String(formData.get("internalNotes") ?? "").trim();
 
@@ -127,32 +141,11 @@ export async function updateZone(zoneId: string, quoteId: string, formData: Form
       wire_length_feet: Number.isFinite(wireLengthFeet) ? wireLengthFeet : 0,
       labour_hours: Number.isFinite(labourHours) ? labourHours : 0,
       hourly_rate: Number.isFinite(hourlyRate) ? hourlyRate : 100,
+      transformer_assignment_note: transformerAssignmentNote || null,
       client_notes: clientNotes || null,
       internal_notes: internalNotes || null,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", zoneId)
-    .eq("quote_id", quoteId);
-
-  if (error) {
-    return {
-      error: error.message,
-    };
-  }
-
-  revalidatePath(`/quotes/${quoteId}`);
-
-  return {
-    success: true,
-  };
-}
-
-export async function deleteZone(zoneId: string, quoteId: string) {
-  const supabase = await createClient();
-
-  const { error } = await supabase
-    .from("zones")
-    .delete()
     .eq("id", zoneId)
     .eq("quote_id", quoteId);
 
@@ -191,6 +184,28 @@ export async function assignZoneTransformer(
       transformer_id: transformerId,
       updated_at: new Date().toISOString(),
     })
+    .eq("id", zoneId)
+    .eq("quote_id", quoteId);
+
+  if (error) {
+    return {
+      error: error.message,
+    };
+  }
+
+  revalidatePath(`/quotes/${quoteId}`);
+
+  return {
+    success: true,
+  };
+}
+
+export async function deleteZone(zoneId: string, quoteId: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("zones")
+    .delete()
     .eq("id", zoneId)
     .eq("quote_id", quoteId);
 

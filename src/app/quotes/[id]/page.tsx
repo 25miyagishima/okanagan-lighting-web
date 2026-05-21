@@ -13,6 +13,7 @@ import { ZoneForm } from "@/features/quotes/zone-form";
 import { ZoneItemForm } from "@/features/quotes/zone-item-form";
 import { ZoneTransformerForm } from "@/features/quotes/zone-transformer-form";
 import { getZonesByQuoteId } from "@/features/quotes/zone-actions";
+import { calculateTransformerCapacitySuggestions } from "@/features/transformers/capacity-suggestions";
 import { calculateDistributionGuidance } from "@/features/transformers/distribution-guidance";
 import {
   calculateTransformerLoads,
@@ -65,16 +66,15 @@ export default async function QuoteDetailPage({
 
   const zoneLoads = calculateZoneLoads(zones, quoteItems);
   const transformerLoads = calculateTransformerLoads(transformers, zoneLoads);
-  const planningSummary = calculatePlanningSummary(
-    zoneLoads,
-    transformerLoads,
-  );
+  const planningSummary = calculatePlanningSummary(zoneLoads, transformerLoads);
   const transformerRecommendation =
     calculateTransformerRecommendation(zoneLoads);
   const distributionGuidance = calculateDistributionGuidance(
     zoneLoads,
     transformerLoads,
   );
+  const capacitySuggestions =
+    calculateTransformerCapacitySuggestions(transformerLoads);
 
   async function updateQuoteAction(formData: FormData) {
     "use server";
@@ -468,6 +468,73 @@ export default async function QuoteDetailPage({
           </section>
 
           <section className="rounded-2xl border bg-white p-4 shadow-sm">
+            <h2 className="mb-4 font-medium">
+              Transformer Capacity Suggestions
+            </h2>
+
+            {capacitySuggestions.length === 0 ? (
+              <p className="text-sm text-neutral-600">
+                Add transformers to see capacity suggestions.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {capacitySuggestions.map((suggestion) => {
+                  const actionClassName =
+                    suggestion.suggestedAction === "add-transformer"
+                      ? "bg-red-50 text-red-700"
+                      : suggestion.suggestedAction === "upgrade"
+                        ? "bg-yellow-50 text-yellow-700"
+                        : suggestion.suggestedAction === "watch"
+                          ? "bg-amber-50 text-amber-700"
+                          : "bg-green-50 text-green-700";
+
+                  return (
+                    <div
+                      key={suggestion.transformerId}
+                      className="rounded-lg border p-3"
+                    >
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <p className="text-sm font-medium">
+                          {suggestion.transformerName}
+                        </p>
+
+                        <span
+                          className={`rounded-full px-2 py-1 text-xs capitalize ${actionClassName}`}
+                        >
+                          {suggestion.suggestedAction.replace("-", " ")}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1 text-xs text-neutral-600">
+                        <div className="flex justify-between gap-3">
+                          <span>Assigned</span>
+                          <span>{suggestion.assignedWatts.toFixed(2)}W</span>
+                        </div>
+
+                        <div className="flex justify-between gap-3">
+                          <span>Safe Capacity</span>
+                          <span>{suggestion.safeCapacityWatts.toFixed(2)}W</span>
+                        </div>
+
+                        <div className="flex justify-between gap-3">
+                          <span>Remaining Safe</span>
+                          <span>
+                            {suggestion.remainingSafeWatts.toFixed(2)}W
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="mt-2 rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
+                        {suggestion.message}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-2xl border bg-white p-4 shadow-sm">
             <h2 className="mb-4 font-medium">Internal Profit Preview</h2>
 
             <div className="space-y-2 text-sm">
@@ -505,8 +572,8 @@ export default async function QuoteDetailPage({
             <div className="mt-6 border-t pt-6 text-sm text-neutral-600">
               <p>
                 Zones, catalog items, quote totals, transformer assignment,
-                planning summaries, recommendations, and distribution guidance
-                are now active.
+                planning summaries, recommendations, distribution guidance, and
+                capacity suggestions are now active.
               </p>
             </div>
           </section>
@@ -677,6 +744,12 @@ export default async function QuoteDetailPage({
                     {zone.clientNotes ? (
                       <p className="mt-2 text-sm text-neutral-600">
                         {zone.clientNotes}
+                      </p>
+                    ) : null}
+
+                    {zone.transformerAssignmentNote ? (
+                      <p className="mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-700">
+                        Field Note: {zone.transformerAssignmentNote}
                       </p>
                     ) : null}
 

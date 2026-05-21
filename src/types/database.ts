@@ -91,6 +91,7 @@ export type Zone = {
   wireLengthFeet: number;
   selectedWireCatalogItemId: string | null;
   transformerId: string | null;
+  transformerAssignmentNote: string | null;
   labourHours: number;
   hourlyRate: number;
   clientNotes: string | null;

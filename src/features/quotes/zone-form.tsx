@@ -36,6 +36,7 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
         <label htmlFor="name" className="text-sm font-medium">
           Zone Name
         </label>
+
         <input
           id="name"
           name="name"
@@ -50,6 +51,7 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
           <label htmlFor="wireLengthFeet" className="text-sm font-medium">
             Wire Length / ft
           </label>
+
           <input
             id="wireLengthFeet"
             name="wireLengthFeet"
@@ -64,6 +66,7 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
           <label htmlFor="labourHours" className="text-sm font-medium">
             Labour Hours
           </label>
+
           <input
             id="labourHours"
             name="labourHours"
@@ -78,6 +81,7 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
           <label htmlFor="hourlyRate" className="text-sm font-medium">
             Hourly Rate
           </label>
+
           <input
             id="hourlyRate"
             name="hourlyRate"
@@ -90,9 +94,26 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
       </div>
 
       <div>
+        <label
+          htmlFor="transformerAssignmentNote"
+          className="text-sm font-medium"
+        >
+          Transformer Assignment Note
+        </label>
+
+        <textarea
+          id="transformerAssignmentNote"
+          name="transformerAssignmentNote"
+          className="mt-1 min-h-20 w-full rounded-lg border px-3 py-2 text-sm"
+          placeholder="Front yard should remain on front outlet transformer. Avoid crossing driveway."
+        />
+      </div>
+
+      <div>
         <label htmlFor="clientNotes" className="text-sm font-medium">
           Client-Facing Notes
         </label>
+
         <textarea
           id="clientNotes"
           name="clientNotes"
@@ -104,6 +125,7 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
         <label htmlFor="internalNotes" className="text-sm font-medium">
           Internal Notes
         </label>
+
         <textarea
           id="internalNotes"
           name="internalNotes"
