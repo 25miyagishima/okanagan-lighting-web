@@ -13,11 +13,13 @@ import { ZoneForm } from "@/features/quotes/zone-form";
 import { ZoneItemForm } from "@/features/quotes/zone-item-form";
 import { ZoneTransformerForm } from "@/features/quotes/zone-transformer-form";
 import { getZonesByQuoteId } from "@/features/quotes/zone-actions";
+import { calculateDistributionGuidance } from "@/features/transformers/distribution-guidance";
 import {
   calculateTransformerLoads,
   calculateZoneLoads,
 } from "@/features/transformers/load-calculations";
 import { calculatePlanningSummary } from "@/features/transformers/planning-summary";
+import { calculateTransformerRecommendation } from "@/features/transformers/transformer-recommendations";
 import { TransformerForm } from "@/features/transformers/transformer-form";
 import {
   deleteTransformer,
@@ -67,6 +69,12 @@ export default async function QuoteDetailPage({
     zoneLoads,
     transformerLoads,
   );
+  const transformerRecommendation =
+    calculateTransformerRecommendation(zoneLoads);
+  const distributionGuidance = calculateDistributionGuidance(
+    zoneLoads,
+    transformerLoads,
+  );
 
   async function updateQuoteAction(formData: FormData) {
     "use server";
@@ -91,6 +99,13 @@ export default async function QuoteDetailPage({
 
     await deleteTransformer(transformerId, id);
   }
+
+  const guidanceClassName =
+    distributionGuidance.severity === "critical"
+      ? "rounded-lg bg-red-50 px-3 py-2 text-red-700"
+      : distributionGuidance.severity === "warning"
+        ? "rounded-lg bg-yellow-50 px-3 py-2 text-yellow-700"
+        : "rounded-lg bg-green-50 px-3 py-2 text-green-700";
 
   return (
     <>
@@ -389,6 +404,70 @@ export default async function QuoteDetailPage({
           </section>
 
           <section className="rounded-2xl border bg-white p-4 shadow-sm">
+            <h2 className="mb-4 font-medium">Load Distribution Guidance</h2>
+
+            <div className="space-y-2 text-sm">
+              <div className={guidanceClassName}>
+                {distributionGuidance.severity === "critical"
+                  ? "Critical load issue detected."
+                  : distributionGuidance.severity === "warning"
+                    ? "Review distribution before final quote."
+                    : "Distribution looks balanced."}
+              </div>
+
+              <div className="space-y-2">
+                {distributionGuidance.messages.map((message) => (
+                  <p
+                    key={message}
+                    className="rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600"
+                  >
+                    {message}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border bg-white p-4 shadow-sm">
+            <h2 className="mb-4 font-medium">Transformer Recommendation</h2>
+
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Total Load</span>
+                <span>{transformerRecommendation.totalWatts.toFixed(2)}W</span>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Minimum Capacity</span>
+                <span>
+                  {transformerRecommendation.recommendedMinimumCapacity.toFixed(
+                    2,
+                  )}
+                  W
+                </span>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Suggested Size</span>
+                <span>
+                  {transformerRecommendation.suggestedTransformerSize}W
+                </span>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <span className="text-neutral-600">Suggested Count</span>
+                <span>
+                  {transformerRecommendation.suggestedTransformerCount}
+                </span>
+              </div>
+
+              <p className="rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
+                {transformerRecommendation.reason}
+              </p>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border bg-white p-4 shadow-sm">
             <h2 className="mb-4 font-medium">Internal Profit Preview</h2>
 
             <div className="space-y-2 text-sm">
@@ -425,8 +504,9 @@ export default async function QuoteDetailPage({
 
             <div className="mt-6 border-t pt-6 text-sm text-neutral-600">
               <p>
-                Zones, catalog items, quote totals, transformer assignment, and
-                electrical planning summaries are now active.
+                Zones, catalog items, quote totals, transformer assignment,
+                planning summaries, recommendations, and distribution guidance
+                are now active.
               </p>
             </div>
           </section>
