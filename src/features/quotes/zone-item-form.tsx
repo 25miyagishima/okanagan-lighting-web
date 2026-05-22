@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { addCatalogItemToZone } from "./quote-item-actions";
 import type { CatalogItem } from "@/types/database";
+import { formStyles } from "@/styles/form-styles";
+import { addCatalogItemToZone } from "./quote-item-actions";
 
 type ZoneItemFormProps = {
   quoteId: string;
@@ -28,9 +29,12 @@ export function ZoneItemForm({
   }
 
   return (
-    <form action={handleSubmit} className="mt-4 space-y-3 rounded-lg border p-3">
+    <form
+      action={handleSubmit}
+      className="mt-4 space-y-3 rounded-xl border border-white/5 bg-white/[0.03] p-3"
+    >
       <div>
-        <label htmlFor={`catalogItemId-${zoneId}`} className="text-xs font-medium">
+        <label htmlFor={`catalogItemId-${zoneId}`} className={formStyles.label}>
           Add Catalog Item
         </label>
 
@@ -38,7 +42,7 @@ export function ZoneItemForm({
           id={`catalogItemId-${zoneId}`}
           name="catalogItemId"
           required
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.select}
         >
           <option value="">Select item</option>
           {catalogItems.map((item) => (
@@ -51,7 +55,7 @@ export function ZoneItemForm({
 
       <div className="grid gap-3 md:grid-cols-2">
         <div>
-          <label htmlFor={`quantity-${zoneId}`} className="text-xs font-medium">
+          <label htmlFor={`quantity-${zoneId}`} className={formStyles.label}>
             Quantity
           </label>
 
@@ -61,34 +65,29 @@ export function ZoneItemForm({
             type="number"
             step="0.01"
             defaultValue="1"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
 
         <div>
-          <label htmlFor={`notes-${zoneId}`} className="text-xs font-medium">
+          <label htmlFor={`notes-${zoneId}`} className={formStyles.label}>
             Notes
           </label>
 
           <input
             id={`notes-${zoneId}`}
             name="notes"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
             placeholder="Optional"
           />
         </div>
       </div>
 
       {errorMessage ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
-          {errorMessage}
-        </p>
+        <p className={formStyles.errorText}>{errorMessage}</p>
       ) : null}
 
-      <button
-        type="submit"
-        className="w-full rounded-lg bg-neutral-950 px-3 py-2 text-sm font-medium text-white"
-      >
+      <button type="submit" className={formStyles.primaryButton}>
         Add Item To Zone
       </button>
     </form>

@@ -8,7 +8,7 @@ export default async function CatalogPage() {
   const items = await getCatalogItems();
 
   return (
-    <>
+    <div className="min-h-screen bg-[#0D0E10] px-3 py-4 text-[#F5F5F1] md:px-6 md:py-6">
       <PageHeader
         title="Catalog"
         description="Manage fixtures, wire, controls, materials, labour items, and categories."
@@ -17,11 +17,13 @@ export default async function CatalogPage() {
       <div className="grid gap-6 xl:grid-cols-[460px_1fr]">
         <CatalogForm />
 
-        <section className="rounded-2xl border bg-white p-4 shadow-sm">
-          <h2 className="mb-4 font-medium">Catalog Items</h2>
+        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
+          <h2 className="mb-4 font-medium text-[#F5F5F1]">
+            Catalog Items
+          </h2>
 
           {items.length === 0 ? (
-            <p className="text-sm text-neutral-600">
+            <p className="text-sm text-[#9EA3AA]">
               No catalog items yet. Add your first item using the form.
             </p>
           ) : (
@@ -30,22 +32,25 @@ export default async function CatalogPage() {
                 <Link
                   key={item.id}
                   href={`/catalog/${item.id}`}
-                  className="block rounded-xl border p-3 hover:bg-neutral-50"
+                  className="block rounded-xl border border-white/5 bg-[#23262B] p-3 transition-colors hover:bg-white/[0.04]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-neutral-600">
+                      <p className="font-medium text-[#F5F5F1]">
+                        {item.name}
+                      </p>
+
+                      <p className="text-sm text-[#9EA3AA]">
                         {item.brand || "No brand"} · {item.category}
                       </p>
                     </div>
 
-                    <span className="rounded-full bg-neutral-100 px-2 py-1 text-xs capitalize text-neutral-700">
+                    <span className="rounded-full border border-white/5 bg-white/[0.04] px-2 py-1 text-xs capitalize text-[#9EA3AA]">
                       {item.active ? "active" : "archived"}
                     </span>
                   </div>
 
-                  <div className="mt-2 text-xs text-neutral-500">
+                  <div className="mt-2 text-xs text-[#5B6068]">
                     {item.quoteGroup} · {item.installType} · Cost{" "}
                     {formatCurrency(item.cost)}
                   </div>
@@ -55,6 +60,6 @@ export default async function CatalogPage() {
           )}
         </section>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formStyles } from "@/styles/form-styles";
 import { createTransformer } from "./transformer-actions";
 
 type TransformerFormProps = {
@@ -26,83 +27,75 @@ export function TransformerForm({ quoteId }: TransformerFormProps) {
   }
 
   return (
-    <form
-      action={handleSubmit}
-      className="space-y-4 rounded-2xl border bg-white p-4 shadow-sm"
-    >
-      <h2 className="font-medium">Add Transformer</h2>
-
+    <form action={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="text-sm font-medium">
+        <label htmlFor="name" className={formStyles.label}>
           Transformer Name
         </label>
+
         <input
           id="name"
           name="name"
           required
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.input}
           placeholder="Transformer 1, Front Yard, Garage..."
         />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor="capacityWatts" className="text-sm font-medium">
+          <label htmlFor="capacityWatts" className={formStyles.label}>
             Capacity / Watts
           </label>
+
           <input
             id="capacityWatts"
             name="capacityWatts"
             type="number"
             step="0.01"
             defaultValue="300"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
 
         <div>
-          <label htmlFor="voltage" className="text-sm font-medium">
+          <label htmlFor="voltage" className={formStyles.label}>
             Voltage
           </label>
+
           <input
             id="voltage"
             name="voltage"
             type="number"
             step="0.01"
             defaultValue="12"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="locationNote" className="text-sm font-medium">
+        <label htmlFor="locationNote" className={formStyles.label}>
           Location Note
         </label>
+
         <input
           id="locationNote"
           name="locationNote"
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.input}
           placeholder="Near outlet, garage wall, side yard..."
         />
       </div>
 
       {errorMessage ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {errorMessage}
-        </p>
+        <p className={formStyles.errorText}>{errorMessage}</p>
       ) : null}
 
       {successMessage ? (
-        <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          {successMessage}
-        </p>
+        <p className={formStyles.successText}>{successMessage}</p>
       ) : null}
 
-      <button
-        type="submit"
-        className="w-full rounded-lg bg-neutral-950 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-      >
+      <button type="submit" className={formStyles.primaryButton}>
         Add Transformer
       </button>
     </form>

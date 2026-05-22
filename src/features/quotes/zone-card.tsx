@@ -13,6 +13,7 @@ import { removeQuoteItem } from "@/features/quotes/quote-item-actions";
 import { ZoneItemForm } from "@/features/quotes/zone-item-form";
 import { ZoneTransformerForm } from "@/features/quotes/zone-transformer-form";
 import { formatCurrency } from "@/lib/utils";
+import { theme } from "@/styles/theme";
 
 type ZoneCardProps = {
   quoteId: string;
@@ -40,29 +41,31 @@ export function ZoneCard({
   const itemCount = zoneItems.length;
 
   return (
-    <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+    <div className={theme.surface.card}>
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="w-full px-3 py-3 text-left hover:bg-neutral-50 md:px-4"
+        className="w-full px-3 py-3 text-left transition-colors hover:bg-white/[0.03] md:px-4"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-medium text-neutral-950">{zone.name}</p>
+              <p className={`font-medium ${theme.text.primary}`}>
+                {zone.name}
+              </p>
 
               {zone.transformerId ? (
-                <span className="rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
+                <span className="rounded-full bg-green-500/10 px-2 py-1 text-xs font-medium text-green-300">
                   Transformer assigned
                 </span>
               ) : (
-                <span className="rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700">
+                <span className="rounded-full bg-yellow-500/10 px-2 py-1 text-xs font-medium text-yellow-300">
                   No transformer
                 </span>
               )}
             </div>
 
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-600">
+            <div className={`mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs ${theme.text.secondary}`}>
               <span>{itemCount} item(s)</span>
               <span>{zone.wireLengthFeet} ft wire</span>
               <span>{zone.labourHours} labour hrs</span>
@@ -71,11 +74,11 @@ export function ZoneCard({
           </div>
 
           <div className="shrink-0 text-right">
-            <p className="text-sm font-semibold text-neutral-950">
+            <p className={`text-sm font-semibold ${theme.accent.gold}`}>
               {formatCurrency(zoneTotal)}
             </p>
 
-            <p className="mt-1 text-xs text-neutral-500">
+            <p className={`mt-1 text-xs ${theme.text.muted}`}>
               {open ? "Hide details" : "Show details"}
             </p>
           </div>
@@ -83,27 +86,33 @@ export function ZoneCard({
       </button>
 
       {open ? (
-        <div className="border-t bg-neutral-50/40 p-3 md:p-4">
+        <div className="border-t border-white/5 bg-white/[0.02] p-3 md:p-4">
           <div className="grid gap-2 md:grid-cols-3 md:gap-3">
-            <div className="rounded-xl border bg-white p-3">
-              <p className="text-xs text-neutral-500">Materials</p>
-              <p className="mt-1 text-sm font-medium">
-                {formatCurrency(zoneTotals?.materialSubtotal ?? 0)}
-              </p>
+            <div className={theme.surface.secondary}>
+              <div className="p-3">
+                <p className={`text-xs ${theme.text.muted}`}>Materials</p>
+                <p className={`mt-1 text-sm font-medium ${theme.text.primary}`}>
+                  {formatCurrency(zoneTotals?.materialSubtotal ?? 0)}
+                </p>
+              </div>
             </div>
 
-            <div className="rounded-xl border bg-white p-3">
-              <p className="text-xs text-neutral-500">Labour</p>
-              <p className="mt-1 text-sm font-medium">
-                {formatCurrency(zoneTotals?.labourSubtotal ?? 0)}
-              </p>
+            <div className={theme.surface.secondary}>
+              <div className="p-3">
+                <p className={`text-xs ${theme.text.muted}`}>Labour</p>
+                <p className={`mt-1 text-sm font-medium ${theme.text.primary}`}>
+                  {formatCurrency(zoneTotals?.labourSubtotal ?? 0)}
+                </p>
+              </div>
             </div>
 
-            <div className="rounded-xl border bg-white p-3">
-              <p className="text-xs text-neutral-500">Load</p>
-              <p className="mt-1 text-sm font-medium">
-                {totalWatts.toFixed(2)}W
-              </p>
+            <div className={theme.surface.secondary}>
+              <div className="p-3">
+                <p className={`text-xs ${theme.text.muted}`}>Load</p>
+                <p className={`mt-1 text-sm font-medium ${theme.accent.gold}`}>
+                  {totalWatts.toFixed(2)}W
+                </p>
+              </div>
             </div>
           </div>
 
@@ -117,34 +126,36 @@ export function ZoneCard({
           </div>
 
           {zone.clientNotes ? (
-            <p className="mt-3 rounded-lg bg-white px-3 py-2 text-sm text-neutral-600">
+            <p className={`mt-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-sm ${theme.text.secondary}`}>
               {zone.clientNotes}
             </p>
           ) : null}
 
           {zone.transformerAssignmentNote ? (
-            <p className="mt-3 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-700">
+            <p className="mt-3 rounded-lg border border-blue-400/10 bg-blue-400/10 px-3 py-2 text-xs text-blue-200">
               Field Note: {zone.transformerAssignmentNote}
             </p>
           ) : null}
 
           {zone.internalNotes ? (
-            <p className="mt-3 rounded-lg bg-neutral-100 px-3 py-2 text-xs text-neutral-600">
+            <p className={`mt-3 rounded-lg border border-white/5 bg-white/[0.04] px-3 py-2 text-xs ${theme.text.secondary}`}>
               Internal: {zone.internalNotes}
             </p>
           ) : null}
 
           <div className="mt-4 md:mt-5">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <h3 className="text-sm font-medium">Zone Items</h3>
+              <h3 className={`text-sm font-medium ${theme.text.primary}`}>
+                Zone Items
+              </h3>
 
-              <span className="text-xs text-neutral-500">
+              <span className={`text-xs ${theme.text.muted}`}>
                 {itemCount} item(s)
               </span>
             </div>
 
             {zoneItems.length === 0 ? (
-              <p className="rounded-lg bg-white px-3 py-2 text-sm text-neutral-600">
+              <p className={`rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-sm ${theme.text.secondary}`}>
                 No catalog items added to this zone yet.
               </p>
             ) : (
@@ -156,15 +167,15 @@ export function ZoneCard({
                   return (
                     <div
                       key={item.id}
-                      className="rounded-xl border bg-white p-2.5 md:p-3"
+                      className="rounded-xl border border-white/5 bg-[#23262B] p-2.5 md:p-3"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-neutral-950">
+                          <p className={`text-sm font-medium ${theme.text.primary}`}>
                             {item.nameSnapshot}
                           </p>
 
-                          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-600">
+                          <div className={`mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs ${theme.text.secondary}`}>
                             <span>{item.quoteGroupSnapshot}</span>
                             <span>Qty {item.quantity}</span>
                             <span>{itemWatts.toFixed(2)}W</span>
@@ -172,7 +183,7 @@ export function ZoneCard({
                         </div>
 
                         <div className="shrink-0 text-right">
-                          <p className="text-sm font-medium text-neutral-950">
+                          <p className={`text-sm font-medium ${theme.accent.gold}`}>
                             {formatCurrency(itemTotal)}
                           </p>
 
@@ -184,7 +195,7 @@ export function ZoneCard({
                           >
                             <button
                               type="submit"
-                              className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
+                              className="rounded-md border border-red-400/20 bg-red-500/10 px-2 py-1 text-xs font-medium text-red-300 hover:bg-red-500/20"
                             >
                               Remove
                             </button>
@@ -193,7 +204,7 @@ export function ZoneCard({
                       </div>
 
                       {item.notes ? (
-                        <p className="mt-2 text-xs text-neutral-500">
+                        <p className={`mt-2 text-xs ${theme.text.muted}`}>
                           {item.notes}
                         </p>
                       ) : null}

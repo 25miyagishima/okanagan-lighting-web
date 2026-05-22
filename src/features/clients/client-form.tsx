@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formStyles } from "@/styles/form-styles";
 import { createClientRecord } from "./client-actions";
 
 export function ClientForm() {
@@ -22,85 +23,86 @@ export function ClientForm() {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4 rounded-2xl border bg-white p-4 shadow-sm">
+    <form
+      action={handleSubmit}
+      className="space-y-4 rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]"
+    >
       <div>
-        <label htmlFor="name" className="text-sm font-medium">
+        <label htmlFor="name" className={formStyles.label}>
           Client Name
         </label>
+
         <input
           id="name"
           name="name"
           required
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.input}
           placeholder="Client name"
         />
       </div>
 
       <div>
-        <label htmlFor="phone" className="text-sm font-medium">
+        <label htmlFor="phone" className={formStyles.label}>
           Phone
         </label>
+
         <input
           id="phone"
           name="phone"
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.input}
           placeholder="Phone number"
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="text-sm font-medium">
+        <label htmlFor="email" className={formStyles.label}>
           Email
         </label>
+
         <input
           id="email"
           name="email"
           type="email"
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.input}
           placeholder="Email address"
         />
       </div>
 
       <div>
-        <label htmlFor="siteAddress" className="text-sm font-medium">
+        <label htmlFor="siteAddress" className={formStyles.label}>
           Site Address
         </label>
+
         <input
           id="siteAddress"
           name="siteAddress"
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.input}
           placeholder="Project address"
         />
       </div>
 
       <div>
-        <label htmlFor="notes" className="text-sm font-medium">
+        <label htmlFor="notes" className={formStyles.label}>
           Notes
         </label>
+
         <textarea
           id="notes"
           name="notes"
-          className="mt-1 min-h-24 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.textarea}
           placeholder="Client notes"
         />
       </div>
 
       {errorMessage ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {errorMessage}
-        </p>
+        <p className={formStyles.errorText}>{errorMessage}</p>
       ) : null}
 
       {successMessage ? (
-        <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          {successMessage}
-        </p>
+        <p className={formStyles.successText}>{successMessage}</p>
       ) : null}
 
-      <button
-        type="submit"
-        className="w-full rounded-lg bg-neutral-950 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-      >
+      <button type="submit" className={formStyles.primaryButton}>
         Save Client
       </button>
     </form>

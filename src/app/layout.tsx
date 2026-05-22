@@ -14,10 +14,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-neutral-50 text-neutral-950">
-        <div className="flex min-h-screen">
+      <body className="bg-[#0D0E10] text-[#F5F5F1]">
+        <div className="flex min-h-screen bg-[#0D0E10]">
           <AppSidebar />
-          <main className="w-full p-4 md:p-8">{children}</main>
+
+          <main className="w-full bg-[#0D0E10]">
+            {children}
+          </main>
         </div>
       </body>
     </html>

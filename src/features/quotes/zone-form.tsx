@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formStyles } from "@/styles/form-styles";
 import { createZone } from "./zone-actions";
 
 type ZoneFormProps = {
@@ -26,14 +27,9 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
   }
 
   return (
-    <form
-      action={handleSubmit}
-      className="space-y-4 rounded-2xl border bg-white p-4 shadow-sm"
-    >
-      <h2 className="font-medium">Add Zone</h2>
-
+    <form action={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="text-sm font-medium">
+        <label htmlFor="name" className={formStyles.label}>
           Zone Name
         </label>
 
@@ -41,14 +37,14 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
           id="name"
           name="name"
           required
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.input}
           placeholder="Front Entry, Backyard, Garage..."
         />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <div>
-          <label htmlFor="wireLengthFeet" className="text-sm font-medium">
+          <label htmlFor="wireLengthFeet" className={formStyles.label}>
             Wire Length / ft
           </label>
 
@@ -58,12 +54,12 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
             type="number"
             step="0.01"
             defaultValue="0"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
 
         <div>
-          <label htmlFor="labourHours" className="text-sm font-medium">
+          <label htmlFor="labourHours" className={formStyles.label}>
             Labour Hours
           </label>
 
@@ -73,12 +69,12 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
             type="number"
             step="0.01"
             defaultValue="0"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
 
         <div>
-          <label htmlFor="hourlyRate" className="text-sm font-medium">
+          <label htmlFor="hourlyRate" className={formStyles.label}>
             Hourly Rate
           </label>
 
@@ -88,7 +84,7 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
             type="number"
             step="0.01"
             defaultValue="100"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
       </div>
@@ -96,7 +92,7 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
       <div>
         <label
           htmlFor="transformerAssignmentNote"
-          className="text-sm font-medium"
+          className={formStyles.label}
         >
           Transformer Assignment Note
         </label>
@@ -104,50 +100,46 @@ export function ZoneForm({ quoteId }: ZoneFormProps) {
         <textarea
           id="transformerAssignmentNote"
           name="transformerAssignmentNote"
-          className="mt-1 min-h-20 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.textarea}
           placeholder="Front yard should remain on front outlet transformer. Avoid crossing driveway."
         />
       </div>
 
       <div>
-        <label htmlFor="clientNotes" className="text-sm font-medium">
+        <label htmlFor="clientNotes" className={formStyles.label}>
           Client-Facing Notes
         </label>
 
         <textarea
           id="clientNotes"
           name="clientNotes"
-          className="mt-1 min-h-20 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.textarea}
         />
       </div>
 
       <div>
-        <label htmlFor="internalNotes" className="text-sm font-medium">
+        <label htmlFor="internalNotes" className={formStyles.label}>
           Internal Notes
         </label>
 
         <textarea
           id="internalNotes"
           name="internalNotes"
-          className="mt-1 min-h-20 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.textarea}
         />
       </div>
 
       {errorMessage ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {errorMessage}
-        </p>
+        <p className={formStyles.errorText}>{errorMessage}</p>
       ) : null}
 
       {successMessage ? (
-        <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          {successMessage}
-        </p>
+        <p className={formStyles.successText}>{successMessage}</p>
       ) : null}
 
       <button
         type="submit"
-        className="w-full rounded-lg bg-neutral-950 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+        className="w-full rounded-xl bg-gradient-to-b from-[#E2B15A] to-[#D88B2D] px-4 py-2 text-sm font-medium text-[#0D0E10] shadow-sm transition-all duration-200 hover:shadow-[0_0_18px_rgba(216,139,45,0.24)]"
       >
         Add Zone
       </button>

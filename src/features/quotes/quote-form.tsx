@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { createQuote } from "./quote-actions";
 import type { Client } from "@/types/database";
+import { formStyles } from "@/styles/form-styles";
+import { createQuote } from "./quote-actions";
 
 type QuoteFormProps = {
   clients: Client[];
@@ -25,10 +26,10 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
   return (
     <form
       action={handleSubmit}
-      className="space-y-4 rounded-2xl border bg-white p-4 shadow-sm"
+      className="space-y-4 rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]"
     >
       <div>
-        <label htmlFor="clientId" className="text-sm font-medium">
+        <label htmlFor="clientId" className={formStyles.label}>
           Client
         </label>
 
@@ -37,9 +38,10 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
           name="clientId"
           required
           defaultValue={defaultClientId ?? ""}
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.select}
         >
           <option value="">Select client</option>
+
           {clients.map((client) => (
             <option key={client.id} value={client.id}>
               {client.name}
@@ -49,7 +51,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
       </div>
 
       <div>
-        <label htmlFor="quoteType" className="text-sm font-medium">
+        <label htmlFor="quoteType" className={formStyles.label}>
           Quote Type
         </label>
 
@@ -57,7 +59,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
           id="quoteType"
           name="quoteType"
           defaultValue="outdoor"
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.select}
         >
           <option value="outdoor">Outdoor</option>
           <option value="indoor">Indoor</option>
@@ -65,21 +67,21 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
       </div>
 
       <div>
-        <label htmlFor="scope" className="text-sm font-medium">
+        <label htmlFor="scope" className={formStyles.label}>
           Scope
         </label>
 
         <textarea
           id="scope"
           name="scope"
-          className="mt-1 min-h-28 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.textareaLarge}
           placeholder="Manual scope of work"
         />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor="discountType" className="text-sm font-medium">
+          <label htmlFor="discountType" className={formStyles.label}>
             Discount Type
           </label>
 
@@ -87,7 +89,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
             id="discountType"
             name="discountType"
             defaultValue="none"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.select}
           >
             <option value="none">None</option>
             <option value="fixed">Fixed $</option>
@@ -96,7 +98,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
         </div>
 
         <div>
-          <label htmlFor="discountValue" className="text-sm font-medium">
+          <label htmlFor="discountValue" className={formStyles.label}>
             Discount Value
           </label>
 
@@ -106,14 +108,14 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
             type="number"
             step="0.01"
             defaultValue="0"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor="depositType" className="text-sm font-medium">
+          <label htmlFor="depositType" className={formStyles.label}>
             Deposit Type
           </label>
 
@@ -121,7 +123,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
             id="depositType"
             name="depositType"
             defaultValue="none"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.select}
           >
             <option value="none">None</option>
             <option value="fixed">Fixed $</option>
@@ -130,7 +132,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
         </div>
 
         <div>
-          <label htmlFor="depositValue" className="text-sm font-medium">
+          <label htmlFor="depositValue" className={formStyles.label}>
             Deposit Value
           </label>
 
@@ -140,7 +142,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
             type="number"
             step="0.01"
             defaultValue="0"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
       </div>
@@ -149,7 +151,7 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
         <div>
           <label
             htmlFor="quoteLevelLabourHours"
-            className="text-sm font-medium"
+            className={formStyles.label}
           >
             Quote-Level Labour Hours
           </label>
@@ -160,14 +162,14 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
             type="number"
             step="0.01"
             defaultValue="0"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
 
         <div>
           <label
             htmlFor="quoteLevelHourlyRate"
-            className="text-sm font-medium"
+            className={formStyles.label}
           >
             Hourly Rate
           </label>
@@ -178,45 +180,40 @@ export function QuoteForm({ clients, defaultClientId }: QuoteFormProps) {
             type="number"
             step="0.01"
             defaultValue="100"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className={formStyles.input}
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="clientNotes" className="text-sm font-medium">
+        <label htmlFor="clientNotes" className={formStyles.label}>
           Client-Facing Notes
         </label>
 
         <textarea
           id="clientNotes"
           name="clientNotes"
-          className="mt-1 min-h-20 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.textarea}
         />
       </div>
 
       <div>
-        <label htmlFor="internalNotes" className="text-sm font-medium">
+        <label htmlFor="internalNotes" className={formStyles.label}>
           Internal Notes
         </label>
 
         <textarea
           id="internalNotes"
           name="internalNotes"
-          className="mt-1 min-h-20 w-full rounded-lg border px-3 py-2 text-sm"
+          className={formStyles.textarea}
         />
       </div>
 
       {errorMessage ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {errorMessage}
-        </p>
+        <p className={formStyles.errorText}>{errorMessage}</p>
       ) : null}
 
-      <button
-        type="submit"
-        className="w-full rounded-lg bg-neutral-950 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-      >
+      <button type="submit" className={formStyles.primaryButton}>
         Create Quote
       </button>
     </form>
