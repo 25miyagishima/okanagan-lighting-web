@@ -48,7 +48,7 @@ export function QuoteWorkspaceNav({
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto rounded-2xl border bg-white p-2 shadow-sm">
-        <div className="flex min-w-max gap-2">
+        <div className="flex min-w-max gap-2 md:min-w-0 md:flex-wrap">
           {tabs.map((tab) => {
             const active = activeTab === tab;
 
@@ -59,8 +59,8 @@ export function QuoteWorkspaceNav({
                 onClick={() => setActiveTab(tab)}
                 className={
                   active
-                    ? "rounded-xl bg-neutral-950 px-4 py-2 text-sm font-medium text-white"
-                    : "rounded-xl px-4 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950"
+                    ? "whitespace-nowrap rounded-xl bg-neutral-950 px-3 py-2 text-sm font-medium text-white"
+                    : "whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950"
                 }
               >
                 {tab}

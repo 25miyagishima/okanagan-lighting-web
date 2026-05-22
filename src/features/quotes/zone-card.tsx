@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { CatalogItem, QuoteItem, Transformer, Zone } from "@/types/database";
+import type {
+  CatalogItem,
+  QuoteItem,
+  Transformer,
+  Zone,
+} from "@/types/database";
 import type { ZoneTotals } from "@/features/quotes/quote-totals";
 import type { ZoneLoadSummary } from "@/features/transformers/load-calculations";
 import { removeQuoteItem } from "@/features/quotes/quote-item-actions";
@@ -39,7 +44,7 @@ export function ZoneCard({
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="w-full px-4 py-3 text-left hover:bg-neutral-50"
+        className="w-full px-3 py-3 text-left hover:bg-neutral-50 md:px-4"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -78,8 +83,8 @@ export function ZoneCard({
       </button>
 
       {open ? (
-        <div className="border-t bg-neutral-50/40 p-4">
-          <div className="grid gap-3 md:grid-cols-3">
+        <div className="border-t bg-neutral-50/40 p-3 md:p-4">
+          <div className="grid gap-2 md:grid-cols-3 md:gap-3">
             <div className="rounded-xl border bg-white p-3">
               <p className="text-xs text-neutral-500">Materials</p>
               <p className="mt-1 text-sm font-medium">
@@ -129,7 +134,7 @@ export function ZoneCard({
             </p>
           ) : null}
 
-          <div className="mt-5">
+          <div className="mt-4 md:mt-5">
             <div className="mb-2 flex items-center justify-between gap-3">
               <h3 className="text-sm font-medium">Zone Items</h3>
 
@@ -151,7 +156,7 @@ export function ZoneCard({
                   return (
                     <div
                       key={item.id}
-                      className="rounded-xl border bg-white p-3"
+                      className="rounded-xl border bg-white p-2.5 md:p-3"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
