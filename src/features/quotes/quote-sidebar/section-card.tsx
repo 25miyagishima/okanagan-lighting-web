@@ -21,11 +21,13 @@ export function SectionCard({
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
+        className="group flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-white/[0.025]"
       >
-        <h2 className={`font-medium ${theme.text.primary}`}>{title}</h2>
+        <h2 className={`text-sm font-medium tracking-wide ${theme.text.primary}`}>
+          {title}
+        </h2>
 
-        <span className={`text-xs ${theme.text.muted}`}>
+        <span className={`text-xs transition-colors group-hover:text-[#E2B15A] ${theme.text.muted}`}>
           {open ? "Hide" : "Show"}
         </span>
       </button>

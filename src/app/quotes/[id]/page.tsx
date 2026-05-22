@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { StatusPill } from "@/components/status-pill";
 import { PageHeader } from "@/components/page-header";
 import { CollapsibleFormSection } from "@/components/collapsible-form-section";
 import { getCatalogItems } from "@/features/catalog/catalog-actions";
@@ -416,15 +417,6 @@ export default async function QuoteDetailPage({
         ) : (
           <div className="space-y-3">
             {capacitySuggestions.map((suggestion) => {
-              const actionClassName =
-                suggestion.suggestedAction === "add-transformer"
-                  ? "bg-red-50 text-red-700"
-                  : suggestion.suggestedAction === "upgrade"
-                    ? "bg-yellow-50 text-yellow-700"
-                    : suggestion.suggestedAction === "watch"
-                      ? "bg-amber-50 text-amber-700"
-                      : "bg-green-50 text-green-700";
-
               return (
                 <div
                   key={suggestion.transformerId}
@@ -435,11 +427,19 @@ export default async function QuoteDetailPage({
                       {suggestion.transformerName}
                     </p>
 
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs capitalize ${actionClassName}`}
+                    <StatusPill
+                      tone={
+                        suggestion.suggestedAction === "add-transformer"
+                          ? "danger"
+                          : suggestion.suggestedAction === "upgrade"
+                            ? "warning"
+                            : suggestion.suggestedAction === "watch"
+                              ? "warning"
+                              : "success"
+                      }
                     >
                       {suggestion.suggestedAction.replace("-", " ")}
-                    </span>
+                    </StatusPill>
                   </div>
 
                   <div className="space-y-1 text-xs text-[#9EA3AA]">
@@ -473,14 +473,12 @@ export default async function QuoteDetailPage({
     </div>
   );
 
-const detailsWorkspace = (
+  const detailsWorkspace = (
   <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
     <div className="mb-4 flex items-center justify-between">
       <h2 className="font-medium text-[#F5F5F1]">Quote Details</h2>
 
-      <span className="rounded-full border border-white/5 bg-white/[0.04] px-3 py-1 text-xs capitalize text-[#9EA3AA]">
-        {quote.status}
-      </span>
+      <StatusPill>{quote.status}</StatusPill>
     </div>
 
     <form action={updateQuoteAction} className="space-y-4">

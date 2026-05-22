@@ -6,8 +6,8 @@ export const designTokens = {
   },
 
   shadow: {
-    sm: "shadow-sm",
-    md: "shadow-md",
+    sm: "shadow-[0_4px_24px_rgba(0,0,0,0.24)]",
+    md: "shadow-[0_8px_40px_rgba(0,0,0,0.32)]",
   },
 
   spacing: {
@@ -17,23 +17,33 @@ export const designTokens = {
   },
 
   typography: {
-    pageTitle: "text-2xl font-semibold tracking-tight",
-    sectionTitle: "text-base font-medium",
-    body: "text-sm text-neutral-600",
-    label: "text-sm font-medium",
-    caption: "text-xs text-neutral-500",
+    pageTitle: "text-2xl font-semibold tracking-tight text-[#F5F5F1]",
+    sectionTitle: "text-base font-medium text-[#F5F5F1]",
+    body: "text-sm text-[#9EA3AA]",
+    label: "text-sm font-medium text-[#F5F5F1]",
+    caption: "text-xs text-[#5B6068]",
   },
 
   surfaces: {
-    card: "border bg-white",
-    subtle: "bg-neutral-50",
-    elevated: "bg-white shadow-sm",
+    card:
+      "rounded-2xl border border-white/5 bg-[#181A1D]",
+    subtle:
+      "rounded-xl border border-white/5 bg-white/[0.03]",
+    elevated:
+      "rounded-2xl border border-white/5 bg-[#181A1D] shadow-[0_8px_40px_rgba(0,0,0,0.32)]",
   },
 
   status: {
-    success: "bg-green-50 text-green-700",
-    warning: "bg-yellow-50 text-yellow-700",
-    danger: "bg-red-50 text-red-700",
-    info: "bg-blue-50 text-blue-700",
+    success:
+      "border border-green-500/20 bg-green-500/10 text-green-300",
+
+    warning:
+      "border border-yellow-500/20 bg-yellow-500/10 text-yellow-300",
+
+    danger:
+      "border border-red-500/20 bg-red-500/10 text-red-300",
+
+    info:
+      "border border-blue-500/20 bg-blue-500/10 text-blue-300",
   },
 } as const;

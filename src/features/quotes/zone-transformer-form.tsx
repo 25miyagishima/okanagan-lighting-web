@@ -33,7 +33,7 @@ export function ZoneTransformerForm({
     <form action={handleSubmit} className="mt-3 space-y-2">
       <label
         htmlFor={`transformerId-${zoneId}`}
-        className="text-xs font-medium"
+        className="text-xs font-medium text-[#F5F5F1]"
       >
         Assigned Transformer
       </label>
@@ -42,7 +42,7 @@ export function ZoneTransformerForm({
         id={`transformerId-${zoneId}`}
         name="transformerId"
         defaultValue={currentTransformerId ?? "none"}
-        className="w-full rounded-lg border px-3 py-2 text-sm"
+        className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[#F5F5F1] outline-none transition-colors focus:border-[#E2B15A]/40"
       >
         <option value="none">No transformer assigned</option>
 
@@ -54,14 +54,14 @@ export function ZoneTransformerForm({
       </select>
 
       {errorMessage ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+        <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
           {errorMessage}
         </p>
       ) : null}
 
       <button
         type="submit"
-        className="w-full rounded-lg border px-3 py-2 text-xs font-medium hover:bg-neutral-50"
+        className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-[#F5F5F1] transition-colors hover:bg-white/[0.06]"
       >
         Save Transformer Assignment
       </button>

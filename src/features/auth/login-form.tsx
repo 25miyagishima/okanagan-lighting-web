@@ -32,42 +32,50 @@ export function LoginForm() {
   return (
     <form action={handleSubmit} className="space-y-4">
       <div>
-        <label className="text-sm font-medium" htmlFor="email">
+        <label
+          className="text-sm font-medium text-[#F5F5F1]"
+          htmlFor="email"
+        >
           Email
         </label>
+
         <input
           id="email"
           name="email"
           type="email"
           required
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className="mt-1 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[#F5F5F1] outline-none transition-colors placeholder:text-[#5B6068] focus:border-[#E2B15A]/40"
           placeholder="you@example.com"
         />
       </div>
 
       <div>
-        <label className="text-sm font-medium" htmlFor="password">
+        <label
+          className="text-sm font-medium text-[#F5F5F1]"
+          htmlFor="password"
+        >
           Password
         </label>
+
         <input
           id="password"
           name="password"
           type="password"
           required
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+          className="mt-1 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[#F5F5F1] outline-none transition-colors placeholder:text-[#5B6068] focus:border-[#E2B15A]/40"
           placeholder="••••••••"
         />
       </div>
 
       {errorMessage ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-300">
           {errorMessage}
         </p>
       ) : null}
 
       <button
         type="submit"
-        className="w-full rounded-lg bg-neutral-950 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+        className="w-full rounded-xl bg-gradient-to-b from-[#E2B15A] to-[#D88B2D] px-4 py-2 text-sm font-medium text-[#0D0E10] transition-opacity hover:opacity-90"
       >
         Sign in
       </button>

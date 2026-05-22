@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { StatusPill } from "@/components/status-pill";
 import { QuoteForm } from "@/features/quotes/quote-form";
 import { getClients } from "@/features/clients/client-actions";
 import { getQuotes } from "@/features/quotes/quote-actions";
@@ -19,7 +20,9 @@ export default async function QuotesPage() {
         <QuoteForm clients={clients} />
 
         <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <h2 className="mb-4 font-medium text-[#F5F5F1]">Quotes</h2>
+          <h2 className="mb-4 font-medium text-[#F5F5F1]">
+            Quotes
+          </h2>
 
           {quotes.length === 0 ? (
             <p className="text-sm text-[#9EA3AA]">
@@ -45,9 +48,9 @@ export default async function QuotesPage() {
                       </p>
                     </div>
 
-                    <span className="rounded-full border border-white/5 bg-white/[0.04] px-2 py-1 text-xs capitalize text-[#9EA3AA]">
+                    <StatusPill>
                       {quote.status}
-                    </span>
+                    </StatusPill>
                   </div>
 
                   <div className="mt-2 text-xs capitalize text-[#5B6068]">

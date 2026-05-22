@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { StatusPill } from "@/components/status-pill";
 import { CatalogForm } from "@/features/catalog/catalog-form";
 import { getCatalogItems } from "@/features/catalog/catalog-actions";
 import { formatCurrency } from "@/lib/utils";
@@ -45,9 +46,9 @@ export default async function CatalogPage() {
                       </p>
                     </div>
 
-                    <span className="rounded-full border border-white/5 bg-white/[0.04] px-2 py-1 text-xs capitalize text-[#9EA3AA]">
+                    <StatusPill>
                       {item.active ? "active" : "archived"}
-                    </span>
+                    </StatusPill>
                   </div>
 
                   <div className="mt-2 text-xs text-[#5B6068]">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
+import { StatusPill } from "@/components/status-pill";
 import {
   archiveCatalogItem,
   getCatalogItemById,
@@ -43,12 +44,15 @@ export default async function CatalogItemDetailPage({
     await restoreCatalogItem(id);
   }
 
+  const inputClassName =
+    "mt-1 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[#F5F5F1] outline-none transition-colors placeholder:text-[#5B6068] focus:border-[#E2B15A]/40";
+
   return (
-    <>
+    <div className="min-h-screen bg-[#0D0E10] px-3 py-4 text-[#F5F5F1] md:px-6 md:py-6">
       <div className="mb-4">
         <Link
           href="/catalog"
-          className="text-sm text-neutral-600 hover:text-neutral-950"
+          className="text-sm text-[#9EA3AA] transition-colors hover:text-[#F5F5F1]"
         >
           ← Back to Catalog
         </Link>
@@ -60,82 +64,89 @@ export default async function CatalogItemDetailPage({
       />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-        <section className="rounded-2xl border bg-white p-4 shadow-sm">
+        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-medium">Catalog Item Details</h2>
+            <h2 className="font-medium text-[#F5F5F1]">
+              Catalog Item Details
+            </h2>
 
-            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs capitalize text-neutral-700">
+            <StatusPill>
               {item.active ? "active" : "archived"}
-            </span>
+            </StatusPill>
           </div>
 
           <form action={updateItem} className="space-y-4">
             <div>
-              <label htmlFor="name" className="text-sm font-medium">
+              <label htmlFor="name" className="text-sm font-medium text-[#F5F5F1]">
                 Product Name
               </label>
+
               <input
                 id="name"
                 name="name"
                 defaultValue={item.name}
                 required
-                className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                className={inputClassName}
               />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label htmlFor="brand" className="text-sm font-medium">
+                <label htmlFor="brand" className="text-sm font-medium text-[#F5F5F1]">
                   Brand
                 </label>
+
                 <input
                   id="brand"
                   name="brand"
                   defaultValue={item.brand || ""}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
 
               <div>
-                <label htmlFor="supplier" className="text-sm font-medium">
+                <label htmlFor="supplier" className="text-sm font-medium text-[#F5F5F1]">
                   Supplier
                 </label>
+
                 <input
                   id="supplier"
                   name="supplier"
                   defaultValue={item.supplier || ""}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="supplierLink" className="text-sm font-medium">
+              <label htmlFor="supplierLink" className="text-sm font-medium text-[#F5F5F1]">
                 Supplier Link
               </label>
+
               <input
                 id="supplierLink"
                 name="supplierLink"
                 defaultValue={item.supplierLink || ""}
-                className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                className={inputClassName}
               />
             </div>
 
             <div>
-              <label htmlFor="skuOrAsin" className="text-sm font-medium">
+              <label htmlFor="skuOrAsin" className="text-sm font-medium text-[#F5F5F1]">
                 SKU / ASIN
               </label>
+
               <input
                 id="skuOrAsin"
                 name="skuOrAsin"
                 defaultValue={item.skuOrAsin || ""}
-                className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                className={inputClassName}
               />
             </div>
 
             <div className="grid gap-4 md:grid-cols-4">
               <div>
-                <label htmlFor="cost" className="text-sm font-medium">
+                <label htmlFor="cost" className="text-sm font-medium text-[#F5F5F1]">
                   Cost
                 </label>
 
@@ -145,12 +156,12 @@ export default async function CatalogItemDetailPage({
                   type="number"
                   step="0.01"
                   defaultValue={item.cost}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
 
               <div>
-                <label htmlFor="wattage" className="text-sm font-medium">
+                <label htmlFor="wattage" className="text-sm font-medium text-[#F5F5F1]">
                   Wattage
                 </label>
 
@@ -160,15 +171,12 @@ export default async function CatalogItemDetailPage({
                   type="number"
                   step="0.01"
                   defaultValue={item.wattage}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="markupPercent"
-                  className="text-sm font-medium"
-                >
+                <label htmlFor="markupPercent" className="text-sm font-medium text-[#F5F5F1]">
                   Markup %
                 </label>
 
@@ -178,15 +186,12 @@ export default async function CatalogItemDetailPage({
                   type="number"
                   step="0.01"
                   defaultValue={item.markupPercent}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="packQuantity"
-                  className="text-sm font-medium"
-                >
+                <label htmlFor="packQuantity" className="text-sm font-medium text-[#F5F5F1]">
                   Pack Quantity
                 </label>
 
@@ -196,34 +201,36 @@ export default async function CatalogItemDetailPage({
                   type="number"
                   step="0.01"
                   defaultValue={item.packQuantity}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
             </div>
-            
+
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label htmlFor="category" className="text-sm font-medium">
+                <label htmlFor="category" className="text-sm font-medium text-[#F5F5F1]">
                   Category
                 </label>
+
                 <input
                   id="category"
                   name="category"
                   required
                   defaultValue={item.category}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
 
               <div>
-                <label htmlFor="quoteGroup" className="text-sm font-medium">
+                <label htmlFor="quoteGroup" className="text-sm font-medium text-[#F5F5F1]">
                   Quote Group
                 </label>
+
                 <select
                   id="quoteGroup"
                   name="quoteGroup"
                   defaultValue={item.quoteGroup}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 >
                   <option value="fixtures">Fixtures</option>
                   <option value="wire">Wire</option>
@@ -235,14 +242,15 @@ export default async function CatalogItemDetailPage({
 
             <div className="grid gap-4 md:grid-cols-3">
               <div>
-                <label htmlFor="installType" className="text-sm font-medium">
+                <label htmlFor="installType" className="text-sm font-medium text-[#F5F5F1]">
                   Install Type
                 </label>
+
                 <select
                   id="installType"
                   name="installType"
                   defaultValue={item.installType}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 >
                   <option value="both">Both</option>
                   <option value="outdoor">Outdoor</option>
@@ -251,14 +259,15 @@ export default async function CatalogItemDetailPage({
               </div>
 
               <div>
-                <label htmlFor="unitType" className="text-sm font-medium">
+                <label htmlFor="unitType" className="text-sm font-medium text-[#F5F5F1]">
                   Unit Type
                 </label>
+
                 <select
                   id="unitType"
                   name="unitType"
                   defaultValue={item.unitType}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 >
                   <option value="each">Each</option>
                   <option value="pack">Pack</option>
@@ -270,27 +279,32 @@ export default async function CatalogItemDetailPage({
               </div>
 
               <div>
-                <label htmlFor="defaultQuantity" className="text-sm font-medium">
+                <label htmlFor="defaultQuantity" className="text-sm font-medium text-[#F5F5F1]">
                   Default Quantity
                 </label>
+
                 <input
                   id="defaultQuantity"
                   name="defaultQuantity"
                   type="number"
                   step="0.01"
                   defaultValue={item.defaultQuantity}
-                  className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                  className={inputClassName}
                 />
               </div>
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <label className="flex items-center gap-2 text-sm">
-                <input name="taxable" type="checkbox" defaultChecked={item.taxable} />
+              <label className="flex items-center gap-2 text-sm text-[#F5F5F1]">
+                <input
+                  name="taxable"
+                  type="checkbox"
+                  defaultChecked={item.taxable}
+                />
                 Taxable
               </label>
 
-              <label className="flex items-center gap-2 text-sm">
+              <label className="flex items-center gap-2 text-sm text-[#F5F5F1]">
                 <input
                   name="favourite"
                   type="checkbox"
@@ -301,35 +315,38 @@ export default async function CatalogItemDetailPage({
             </div>
 
             <div>
-              <label htmlFor="notes" className="text-sm font-medium">
+              <label htmlFor="notes" className="text-sm font-medium text-[#F5F5F1]">
                 Notes
               </label>
+
               <textarea
                 id="notes"
                 name="notes"
                 defaultValue={item.notes || ""}
-                className="mt-1 min-h-24 w-full rounded-lg border px-3 py-2 text-sm"
+                className="mt-1 min-h-24 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[#F5F5F1] outline-none transition-colors placeholder:text-[#5B6068] focus:border-[#E2B15A]/40"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-neutral-950 px-4 py-2 text-sm font-medium text-white"
+              className="w-full rounded-xl bg-gradient-to-b from-[#E2B15A] to-[#D88B2D] px-4 py-2 text-sm font-medium text-[#0D0E10] transition-opacity hover:opacity-90"
             >
               Save Changes
             </button>
           </form>
         </section>
 
-        <section className="rounded-2xl border bg-white p-4 shadow-sm">
-          <h2 className="mb-4 font-medium">Catalog Workflow</h2>
+        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
+          <h2 className="mb-4 font-medium text-[#F5F5F1]">
+            Catalog Workflow
+          </h2>
 
           <div className="space-y-3">
             {item.active ? (
               <form action={archiveItem}>
                 <button
                   type="submit"
-                  className="w-full rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100"
+                  className="w-full rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/15"
                 >
                   Archive Item
                 </button>
@@ -338,7 +355,7 @@ export default async function CatalogItemDetailPage({
               <form action={restoreItem}>
                 <button
                   type="submit"
-                  className="w-full rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-100"
+                  className="w-full rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-medium text-green-300 transition-colors hover:bg-green-500/15"
                 >
                   Restore Item
                 </button>
@@ -346,7 +363,7 @@ export default async function CatalogItemDetailPage({
             )}
           </div>
 
-          <div className="mt-6 border-t pt-6 text-sm text-neutral-600">
+          <div className="mt-6 border-t border-white/5 pt-6 text-sm text-[#9EA3AA]">
             <p>
               Catalog items are the source of truth for quote selections.
               Future quotes will store pricing snapshots when items are added.
@@ -354,6 +371,6 @@ export default async function CatalogItemDetailPage({
           </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }

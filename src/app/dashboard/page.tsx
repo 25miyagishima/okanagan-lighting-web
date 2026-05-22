@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { StatusPill } from "@/components/status-pill";
 import { getDashboardMetrics } from "@/features/dashboard/dashboard-actions";
 
 export default async function DashboardPage() {
@@ -77,9 +78,7 @@ export default async function DashboardPage() {
                       </p>
                     </div>
 
-                    <span className="rounded-full border border-white/5 bg-white/[0.04] px-2 py-1 text-xs capitalize text-[#9EA3AA]">
-                      {client.status}
-                    </span>
+                    <StatusPill>{client.status}</StatusPill>
                   </div>
                 </Link>
               ))}

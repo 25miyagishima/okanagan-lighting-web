@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { StatusPill } from "@/components/status-pill";
 import { ClientForm } from "@/features/clients/client-form";
 import { getClients } from "@/features/clients/client-actions";
 
@@ -44,9 +45,9 @@ export default async function ClientsPage() {
                       </p>
                     </div>
 
-                    <span className="rounded-full border border-white/5 bg-white/[0.04] px-2 py-1 text-xs capitalize text-[#9EA3AA]">
+                    <StatusPill>
                       {client.status}
-                    </span>
+                    </StatusPill>
                   </div>
 
                   <div className="mt-2 text-xs text-[#5B6068]">
