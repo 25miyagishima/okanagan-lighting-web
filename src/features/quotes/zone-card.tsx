@@ -7,13 +7,20 @@ import type {
   Transformer,
   Zone,
 } from "@/types/database";
+import type { MediaAsset } from "@/features/media/media-types";
 import type { ZoneTotals } from "@/features/quotes/quote-totals";
 import type { ZoneLoadSummary } from "@/features/transformers/load-calculations";
+import { MediaGallery } from "@/features/media/components/media-gallery";
+import { ZoneMediaUpload } from "@/features/media/components/zone-media-upload";
 import { removeQuoteItem } from "@/features/quotes/quote-item-actions";
 import { ZoneItemForm } from "@/features/quotes/zone-item-form";
 import { ZoneTransformerForm } from "@/features/quotes/zone-transformer-form";
 import { formatCurrency } from "@/lib/utils";
 import { theme } from "@/styles/theme";
+
+type MediaAssetWithUrl = MediaAsset & {
+  signedUrl: string | null;
+};
 
 type ZoneCardProps = {
   quoteId: string;
@@ -23,6 +30,7 @@ type ZoneCardProps = {
   zoneItems: QuoteItem[];
   transformers: Transformer[];
   activeCatalogItems: CatalogItem[];
+  zoneMedia?: MediaAssetWithUrl[];
 };
 
 export function ZoneCard({
@@ -33,6 +41,7 @@ export function ZoneCard({
   zoneItems,
   transformers,
   activeCatalogItems,
+  zoneMedia = [],
 }: ZoneCardProps) {
   const [open, setOpen] = useState(!zone.collapsed);
 
@@ -65,11 +74,14 @@ export function ZoneCard({
               )}
             </div>
 
-            <div className={`mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs ${theme.text.secondary}`}>
+            <div
+              className={`mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs ${theme.text.secondary}`}
+            >
               <span>{itemCount} item(s)</span>
               <span>{zone.wireLengthFeet} ft wire</span>
               <span>{zone.labourHours} labour hrs</span>
               <span>{totalWatts.toFixed(2)}W load</span>
+              <span>{zoneMedia.length} photo(s)</span>
             </div>
           </div>
 
@@ -126,7 +138,9 @@ export function ZoneCard({
           </div>
 
           {zone.clientNotes ? (
-            <p className={`mt-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-sm ${theme.text.secondary}`}>
+            <p
+              className={`mt-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-sm ${theme.text.secondary}`}
+            >
               {zone.clientNotes}
             </p>
           ) : null}
@@ -138,10 +152,29 @@ export function ZoneCard({
           ) : null}
 
           {zone.internalNotes ? (
-            <p className={`mt-3 rounded-lg border border-white/5 bg-white/[0.04] px-3 py-2 text-xs ${theme.text.secondary}`}>
+            <p
+              className={`mt-3 rounded-lg border border-white/5 bg-white/[0.04] px-3 py-2 text-xs ${theme.text.secondary}`}
+            >
               Internal: {zone.internalNotes}
             </p>
           ) : null}
+
+          <div className="mt-4 md:mt-5">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <h3 className={`text-sm font-medium ${theme.text.primary}`}>
+                Zone Photos
+              </h3>
+
+              <span className={`text-xs ${theme.text.muted}`}>
+                {zoneMedia.length} photo(s)
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              <ZoneMediaUpload quoteId={quoteId} zoneId={zone.id} />
+              <MediaGallery media={zoneMedia} title="Zone Photos" />
+            </div>
+          </div>
 
           <div className="mt-4 md:mt-5">
             <div className="mb-2 flex items-center justify-between gap-3">
@@ -155,7 +188,9 @@ export function ZoneCard({
             </div>
 
             {zoneItems.length === 0 ? (
-              <p className={`rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-sm ${theme.text.secondary}`}>
+              <p
+                className={`rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-sm ${theme.text.secondary}`}
+              >
                 No catalog items added to this zone yet.
               </p>
             ) : (
@@ -171,11 +206,15 @@ export function ZoneCard({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className={`text-sm font-medium ${theme.text.primary}`}>
+                          <p
+                            className={`text-sm font-medium ${theme.text.primary}`}
+                          >
                             {item.nameSnapshot}
                           </p>
 
-                          <div className={`mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs ${theme.text.secondary}`}>
+                          <div
+                            className={`mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs ${theme.text.secondary}`}
+                          >
                             <span>{item.quoteGroupSnapshot}</span>
                             <span>Qty {item.quantity}</span>
                             <span>{itemWatts.toFixed(2)}W</span>
@@ -183,7 +222,9 @@ export function ZoneCard({
                         </div>
 
                         <div className="shrink-0 text-right">
-                          <p className={`text-sm font-medium ${theme.accent.gold}`}>
+                          <p
+                            className={`text-sm font-medium ${theme.accent.gold}`}
+                          >
                             {formatCurrency(itemTotal)}
                           </p>
 

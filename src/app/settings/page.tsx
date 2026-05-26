@@ -1,18 +1,76 @@
 import { PageHeader } from "@/components/page-header";
+import { AppSection } from "@/components/ui/app-section";
+import { EmptyState } from "@/components/ui/empty-state";
+import { MetricCard } from "@/components/ui/metric-card";
+import { PageContainer } from "@/components/ui/page-container";
 
 export default function SettingsPage() {
   return (
-    <div className="min-h-screen bg-[#0D0E10] px-3 py-4 text-[#F5F5F1] md:px-6 md:py-6">
+    <PageContainer>
       <PageHeader
+        eyebrow="Administration"
         title="Settings / Admin"
-        description="Manage business settings, branding, tax, labour rate, warranty, payment terms, and users."
+        description="Manage branding, tax configuration, labour rates, warranties, payment terms, users, and operational preferences."
       />
 
-      <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-        <div className="rounded-xl border border-white/5 bg-[#23262B] p-4 text-sm text-[#9EA3AA]">
-          Settings/Admin will be built in Phase 2 and expanded later.
-        </div>
-      </section>
-    </div>
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          label="Users"
+          value="1"
+          helperText="Platform users with system access."
+        />
+
+        <MetricCard
+          label="Tax Profiles"
+          value="1"
+          tone="brand"
+          helperText="Configured taxation structures."
+        />
+
+        <MetricCard
+          label="Active Branding"
+          value="1"
+          tone="success"
+          helperText="Current proposal and PDF branding profiles."
+        />
+
+        <MetricCard
+          label="Pending Changes"
+          value="0"
+          helperText="Administrative updates awaiting review."
+        />
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-2">
+        <AppSection
+          title="Administrative Workflow"
+          description="Core business configuration systems planned for future phases."
+        >
+          <div className="space-y-3">
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 text-sm leading-relaxed text-[#A7ABB1]">
+              Business identity, branding, and proposal customization tools.
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 text-sm leading-relaxed text-[#A7ABB1]">
+              Tax configuration, labour rate controls, and operational defaults.
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 text-sm leading-relaxed text-[#A7ABB1]">
+              User permissions, workflow administration, and future system integrations.
+            </div>
+          </div>
+        </AppSection>
+
+        <AppSection
+          title="Configuration Queue"
+          description="Administrative systems and settings modules will appear here."
+        >
+          <EmptyState
+            title="No configurable modules yet"
+            description="Business configuration tools and administrative workflows will populate this area as platform systems continue expanding."
+          />
+        </AppSection>
+      </div>
+    </PageContainer>
   );
 }

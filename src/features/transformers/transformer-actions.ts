@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { Transformer } from "@/types/database";
+import { ensureQuoteEditable } from "@/features/quotes/quote-actions";
 
 type TransformerRow = {
   id: string;
@@ -23,9 +24,7 @@ function mapTransformerRow(row: TransformerRow): Transformer {
     name: row.name,
     capacityWatts: Number(row.capacity_watts),
     voltage: Number(row.voltage),
-    maxRecommendedLoadWatts: Number(
-      row.max_recommended_load_watts,
-    ),
+    maxRecommendedLoadWatts: Number(row.max_recommended_load_watts),
     locationNote: row.location_note,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -63,30 +62,29 @@ export async function getTransformersByQuoteId(
     return [];
   }
 
-  return data.map((row) =>
-    mapTransformerRow(row as TransformerRow),
-  );
+  return data.map((row) => mapTransformerRow(row as TransformerRow));
 }
 
 export async function createTransformer(
   quoteId: string,
   formData: FormData,
 ) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before adding transformers.",
+    };
+  }
+
   const supabase = await createClient();
 
   const name = String(formData.get("name") ?? "").trim();
-
-  const capacityWatts = Number(
-    formData.get("capacityWatts") ?? 300,
-  );
-
-  const voltage = Number(
-    formData.get("voltage") ?? 12,
-  );
-
-  const locationNote = String(
-    formData.get("locationNote") ?? "",
-  ).trim();
+  const capacityWatts = Number(formData.get("capacityWatts") ?? 300);
+  const voltage = Number(formData.get("voltage") ?? 12);
+  const locationNote = String(formData.get("locationNote") ?? "").trim();
 
   if (!name) {
     return {
@@ -94,19 +92,18 @@ export async function createTransformer(
     };
   }
 
-  const recommendedLoad =
-    calculateRecommendedLoad(capacityWatts);
+  const recommendedLoad = calculateRecommendedLoad(capacityWatts);
 
-  const { error } = await supabase
-    .from("transformers")
-    .insert({
-      quote_id: quoteId,
-      name,
-      capacity_watts: capacityWatts,
-      voltage,
-      max_recommended_load_watts: recommendedLoad,
-      location_note: locationNote || null,
-    });
+  const { error } = await supabase.from("transformers").insert({
+    quote_id: quoteId,
+    name,
+    capacity_watts: Number.isFinite(capacityWatts) ? capacityWatts : 300,
+    voltage: Number.isFinite(voltage) ? voltage : 12,
+    max_recommended_load_watts: Number.isFinite(recommendedLoad)
+      ? recommendedLoad
+      : calculateRecommendedLoad(300),
+    location_note: locationNote || null,
+  });
 
   if (error) {
     return {
@@ -125,6 +122,16 @@ export async function deleteTransformer(
   transformerId: string,
   quoteId: string,
 ) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before deleting transformers.",
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase

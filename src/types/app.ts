@@ -6,10 +6,12 @@ export type QuoteStatus =
   | "draft"
   | "sent"
   | "approved"
-  | "declined"
-  | "locked"
+  | "scheduled"
+  | "installed"
+  | "invoiced"
+  | "paid"
   | "archived";
-
+  
 export type QuoteType = "indoor" | "outdoor";
 
 export type JobStatus =

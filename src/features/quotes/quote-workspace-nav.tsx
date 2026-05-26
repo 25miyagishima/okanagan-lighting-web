@@ -46,34 +46,39 @@ export function QuoteWorkspaceNav({
   const activePanel = panelByTab[activeTab];
 
   return (
-    <div className="space-y-4">
-      <div className="overflow-x-auto rounded-2xl border border-white/5 bg-[#181A1D] p-2 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-        <div className="flex min-w-max gap-2 md:min-w-0 md:flex-wrap">
-          {tabs.map((tab) => {
-            const active = activeTab === tab;
+    <div className="space-y-5">
+      <div className="sticky top-0 z-20 -mx-4 border-b border-white/[0.06] bg-[#0D0E10]/92 px-4 pb-3 pt-2 backdrop-blur-xl sm:mx-0 sm:rounded-2xl sm:border sm:bg-[#141618]/92 sm:p-3">
+        <div className="overflow-x-auto">
+          <div className="flex min-w-max gap-2">
+            {tabs.map((tab) => {
+              const active = activeTab === tab;
 
-            return (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                className={
-                  active
-                    ? "whitespace-nowrap rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-sm font-medium text-[#E2B15A]"
-                    : "whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium text-[#9EA3AA] transition-colors hover:bg-white/[0.04] hover:text-[#F5F5F1]"
-                }
-              >
-                {tab}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(tab)}
+                  className={[
+                    "whitespace-nowrap rounded-2xl px-4 py-2.5 text-sm font-medium transition-all duration-200",
+                    active
+                      ? "border border-amber-500/20 bg-gradient-to-r from-amber-500/15 to-transparent text-[#E2B15A] shadow-[0_0_0_1px_rgba(216,139,45,0.08)]"
+                      : "text-[#9EA3AA] hover:bg-white/[0.04] hover:text-[#F5F5F1]",
+                  ].join(" ")}
+                >
+                  {tab}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <WorkspaceLayout
-        content={activePanel.content}
-        actions={activePanel.actions}
-      />
+      <div className="animate-in fade-in duration-200">
+        <WorkspaceLayout
+          content={activePanel.content}
+          actions={activePanel.actions}
+        />
+      </div>
     </div>
   );
 }

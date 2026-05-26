@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { QuoteItem } from "@/types/database";
 import type { CatalogUnitType, QuoteItemGroup } from "@/types/app";
+import { ensureQuoteEditable } from "@/features/quotes/quote-actions";
 
 type QuoteItemRow = {
   id: string;
@@ -103,6 +104,16 @@ export async function addCatalogItemToZone(
   zoneId: string,
   formData: FormData,
 ) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before adding items.",
+    };
+  }
+
   const supabase = await createClient();
 
   const catalogItemId = String(formData.get("catalogItemId") ?? "").trim();
@@ -175,6 +186,16 @@ export async function addCatalogItemToZone(
 }
 
 export async function removeQuoteItem(quoteItemId: string, quoteId: string) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before removing items.",
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase

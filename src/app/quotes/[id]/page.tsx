@@ -3,14 +3,29 @@ import { notFound } from "next/navigation";
 import { StatusPill } from "@/components/status-pill";
 import { PageHeader } from "@/components/page-header";
 import { CollapsibleFormSection } from "@/components/collapsible-form-section";
+import { AppButton } from "@/components/ui/app-button";
+import { AppSection } from "@/components/ui/app-section";
+import { AppSelect } from "@/components/ui/app-select";
+import { AppTextarea } from "@/components/ui/app-textarea";
+import { FormField } from "@/components/ui/form-field";
+import { PageContainer } from "@/components/ui/page-container";
+import { theme } from "@/styles/theme";
+import { ClientQuotePdfButton } from "@/features/pdf/components/client-quote-pdf-button";
+import { MaterialListPdfButton } from "@/features/pdf/components/material-list-pdf-button";
+import { BusinessProfitPdfButton } from "@/features/pdf/components/business-profit-pdf-button";
 import { getCatalogItems } from "@/features/catalog/catalog-actions";
 import { InternalProfitCard } from "@/features/quotes/quote-sidebar/internal-profit-card";
 import { QuoteTotalsCard } from "@/features/quotes/quote-sidebar/quote-totals-card";
 import { SectionCard } from "@/features/quotes/quote-sidebar/section-card";
 import {
   archiveQuote,
+  createQuoteRevision,
+  duplicateQuote,
   getQuoteById,
+  getQuoteRevisions,
   updateQuote,
+  updateQuoteStatus,
+  getRevisionComparison,
 } from "@/features/quotes/quote-actions";
 import { getQuoteItemsByQuoteId } from "@/features/quotes/quote-item-actions";
 import { calculateQuoteTotals } from "@/features/quotes/quote-totals";
@@ -31,6 +46,20 @@ import {
   deleteTransformer,
   getTransformersByQuoteId,
 } from "@/features/transformers/transformer-actions";
+import { QuoteMediaUpload } from "@/features/media/components/quote-media-upload";
+import { MediaGallery } from "@/features/media/components/media-gallery";
+import { getMediaByQuoteId } from "@/features/media/actions/get-media";
+import { getMediaSignedUrls } from "@/features/media/actions/get-media-signed-urls";
+import { RevisionComparisonPanel } from "@/features/quotes/revision-comparison-panel";
+import { ChangeOrderPanel } from "@/features/change-orders/change-order-panel";
+import { getChangeOrdersByQuoteId } from "@/features/change-orders/change-order-actions";
+import { formatCurrency } from "@/lib/utils";
+import { QuoteAcceptancePanel } from "@/features/quote-acceptance/quote-acceptance-panel";
+import { getQuoteAcceptanceByQuoteId } from "@/features/quote-acceptance/quote-acceptance-actions";
+import { InstallReadinessPanel } from "@/features/install-readiness/install-readiness-panel";
+import { getInstallReadinessByQuoteId } from "@/features/install-readiness/install-readiness-actions";
+import { JobHandoffPanel } from "@/features/job-handoff/job-handoff-panel";
+import { createJobHandoffSummary } from "@/features/job-handoff/job-handoff-summary";
 
 type QuoteDetailPageProps = {
   params: Promise<{
@@ -38,20 +67,45 @@ type QuoteDetailPageProps = {
   }>;
 };
 
+type WorkflowStatus =
+  | "draft"
+  | "sent"
+  | "approved"
+  | "scheduled"
+  | "installed"
+  | "invoiced"
+  | "paid"
+  | "archived";
+
+  function formatStableDate(value: string) {
+  return new Date(value).toISOString().slice(0, 10);
+}
+
 export default async function QuoteDetailPage({
   params,
 }: QuoteDetailPageProps) {
   const { id } = await params;
 
   const quote = await getQuoteById(id);
-  const zones = await getZonesByQuoteId(id);
-  const catalogItems = await getCatalogItems();
-  const quoteItems = await getQuoteItemsByQuoteId(id);
-  const transformers = await getTransformersByQuoteId(id);
 
   if (!quote) {
     notFound();
   }
+
+  const revisions = await getQuoteRevisions(quote.quoteNumber);
+  const revisionComparison = await getRevisionComparison(id);
+  const changeOrders = await getChangeOrdersByQuoteId(id);
+  const zones = await getZonesByQuoteId(id);
+  const catalogItems = await getCatalogItems();
+  const quoteItems = await getQuoteItemsByQuoteId(id);
+  const transformers = await getTransformersByQuoteId(id);
+  const media = await getMediaByQuoteId(id);
+  const mediaWithUrls = await getMediaSignedUrls(media);
+  const acceptance = await getQuoteAcceptanceByQuoteId(id);
+  const installReadiness = await getInstallReadinessByQuoteId(id);
+  const quoteMedia = mediaWithUrls.filter(
+    (item) => item.ownerType === "quote",
+  );
 
   const activeCatalogItems = catalogItems.filter((item) => item.active);
 
@@ -68,8 +122,27 @@ export default async function QuoteDetailPage({
     labourTaxable: false,
   });
 
+const approvedChangeOrderTotal = changeOrders
+  .filter((changeOrder) => changeOrder.status === "approved")
+  .reduce((total, changeOrder) => total + changeOrder.grandTotal, 0);
+
+const revisedProjectTotal =
+  totals.total + approvedChangeOrderTotal;
+  
   const zoneLoads = calculateZoneLoads(zones, quoteItems);
   const transformerLoads = calculateTransformerLoads(transformers, zoneLoads);
+  const jobHandoffSummary = createJobHandoffSummary({
+  quote,
+  zones,
+  quoteItems,
+  transformers,
+  zoneLoads,
+  transformerLoads,
+  totals,
+  acceptance,
+  installReadiness,
+  changeOrders,
+});
   const planningSummary = calculatePlanningSummary(zoneLoads, transformerLoads);
   const transformerRecommendation =
     calculateTransformerRecommendation(zoneLoads);
@@ -82,27 +155,42 @@ export default async function QuoteDetailPage({
 
   async function updateQuoteAction(formData: FormData) {
     "use server";
-
     await updateQuote(id, formData);
   }
 
   async function archiveQuoteAction() {
     "use server";
-
     await archiveQuote(id);
+  }
+
+  async function duplicateQuoteAction() {
+    "use server";
+    await duplicateQuote(id);
+  }
+
+  async function createQuoteRevisionAction() {
+    "use server";
+    await createQuoteRevision(id);
+  }
+
+  async function updateQuoteStatusAction(formData: FormData) {
+    "use server";
+
+    const status = String(formData.get("status") ?? "draft") as WorkflowStatus;
+    await updateQuoteStatus(id, status);
   }
 
   async function deleteTransformerAction(formData: FormData) {
     "use server";
 
     const transformerId = String(formData.get("transformerId") ?? "");
-
-    if (!transformerId) {
-      return;
-    }
+    if (!transformerId) return;
 
     await deleteTransformer(transformerId, id);
   }
+
+  const quoteLocked =
+    quote.status !== "draft" && quote.status !== "sent";
 
   const guidanceClassName =
     distributionGuidance.severity === "critical"
@@ -111,196 +199,376 @@ export default async function QuoteDetailPage({
         ? "rounded-lg border border-yellow-400/20 bg-yellow-500/10 px-3 py-2 text-yellow-300"
         : "rounded-lg border border-green-400/20 bg-green-500/10 px-3 py-2 text-green-300";
 
+  const workflowStatusTone =
+    quote.status === "approved"
+      ? "success"
+      : quote.status === "sent"
+        ? "warning"
+        : quote.status === "archived"
+          ? "danger"
+          : "neutral";
+
+ const revisionHistory = (
+  <SectionCard title="Revision History">
+    {revisions.length === 0 ? (
+      <p className="text-sm text-[#9EA3AA]">
+        No revisions found for this quote.
+      </p>
+    ) : (
+      <div className="space-y-3">
+        {revisions.map((revision) => {
+          const active = revision.id === quote.id;
+
+          return (
+            <Link
+              key={revision.id}
+              href={`/quotes/${revision.id}`}
+              className={
+                active
+                  ? "block rounded-2xl border border-[#D88B2D]/30 bg-[#D88B2D]/10 p-4"
+                  : "block rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 transition-all duration-200 hover:border-[#D88B2D]/25 hover:bg-white/[0.045]"
+              }
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium text-[#F5F5F1]">
+                      {revision.quoteNumber} Rev {revision.revisionNumber}
+                    </p>
+
+                    {active ? (
+                      <span className="rounded-full bg-[#D88B2D]/20 px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-[#E2B15A]">
+                        Current
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <p className="mt-1 text-sm text-[#A7ABB1]">
+                    Created {formatStableDate(revision.createdAt)}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <StatusPill>{revision.status}</StatusPill>
+                  <span className="text-sm text-[#E2B15A]">→</span>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    )}
+  </SectionCard>
+);
+
   const overview = (
     <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
       <div className="space-y-4">
-        <SectionCard title="Quote Snapshot">
-          <div className="grid gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-white/5 bg-[#23262B] p-3">
-              <p className="text-xs text-[#5B6068]">Zones</p>
-              <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">{zones.length}</p>
-            </div>
+        {quoteLocked ? (
+          <SectionCard
+            title="Quote Locked"
+            actions={<StatusPill tone="warning">locked</StatusPill>}
+          >
+            <p className="text-sm leading-relaxed text-[#A7ABB1]">
+              This quote is locked because it has moved beyond draft/sent
+              status. Create a revision before making pricing, zone, fixture,
+              transformer, or engineering changes.
+            </p>
+          </SectionCard>
+        ) : null}
 
-            <div className="rounded-xl border border-white/5 bg-[#23262B] p-3">
-              <p className="text-xs text-[#5B6068]">Transformers</p>
-              <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
-                {transformers.length}
-              </p>
-            </div>
+<SectionCard title="Quote Snapshot">
+  <div className="grid gap-3 md:grid-cols-4">
+    <div className={`${theme.surface.secondary} p-3`}>
+      <p className="text-xs text-[#5B6068]">Zones</p>
+      <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
+        {zones.length}
+      </p>
+    </div>
 
-            <div className="rounded-xl border border-white/5 bg-[#23262B] p-3">
-              <p className="text-xs text-[#5B6068]">System Load</p>
-              <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
-                {planningSummary.totalSystemWatts.toFixed(2)}W
-              </p>
-            </div>
-          </div>
+    <div className={`${theme.surface.secondary} p-3`}>
+      <p className="text-xs text-[#5B6068]">Transformers</p>
+      <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
+        {transformers.length}
+      </p>
+    </div>
 
-          <div className="mt-4 rounded-xl border border-white/5 bg-white/[0.03] p-3 text-sm text-[#9EA3AA]">
-            {planningSummary.isSystemSafe
-              ? "System looks safe based on current assignments."
-              : "Review electrical planning before finalizing this quote."}
+    <div className={`${theme.surface.secondary} p-3`}>
+      <p className="text-xs text-[#5B6068]">System Load</p>
+      <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
+        {planningSummary.totalSystemWatts.toFixed(2)}W
+      </p>
+    </div>
+
+    <div className={`${theme.surface.secondary} p-3`}>
+      <p className="text-xs text-[#5B6068]">Revised Total</p>
+      <p className="mt-1 text-lg font-semibold text-[#E2B15A]">
+        {formatCurrency(revisedProjectTotal)}
+      </p>
+    </div>
+  </div>
+
+  <div className="mt-4 rounded-xl border border-white/5 bg-white/[0.03] p-3 text-sm text-[#9EA3AA]">
+    {planningSummary.isSystemSafe
+      ? "System looks safe based on current assignments."
+      : "Review electrical planning before finalizing this quote."}
+  </div>
+</SectionCard>
+
+        {revisionHistory}
+<RevisionComparisonPanel comparison={revisionComparison} />
+
+<ChangeOrderPanel
+  quoteId={quote.id}
+  changeOrders={changeOrders}
+  quoteLocked={quoteLocked}
+/>
+
+<QuoteAcceptancePanel
+  quoteId={quote.id}
+  acceptance={acceptance}
+/>
+
+<InstallReadinessPanel
+  quoteId={quote.id}
+  readiness={installReadiness}
+/>
+
+<JobHandoffPanel summary={jobHandoffSummary} />
+
+        <SectionCard title="Quote Photos">
+          <div className="space-y-4">
+            <QuoteMediaUpload quoteId={quote.id} />
+            <MediaGallery media={quoteMedia} title="Quote Photos" />
           </div>
         </SectionCard>
 
-        <SectionCard title="Quote Workflow">
-          <div className="space-y-3">
-            <form action={archiveQuoteAction}>
-              <button
-                type="submit"
-                className="w-full rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/20"
-              >
-                Archive Quote
-              </button>
-            </form>
+        <SectionCard
+          title="Proposal Controls"
+          actions={
+            <StatusPill tone={workflowStatusTone}>{quote.status}</StatusPill>
+          }
+        >
+          <div className="space-y-5">
+            <div className="space-y-3">
+              <p className={theme.typography.cardTitle}>Proposal Documents</p>
+
+              <ClientQuotePdfButton quoteId={quote.id} />
+              <MaterialListPdfButton quoteId={quote.id} />
+              <BusinessProfitPdfButton quoteId={quote.id} />
+            </div>
+
+            <div className="border-t border-white/5 pt-5">
+              <div className="space-y-3">
+                <p className={theme.typography.cardTitle}>Status Workflow</p>
+
+                <form action={updateQuoteStatusAction}>
+                  <input type="hidden" name="status" value="sent" />
+                  <AppButton
+                    type="submit"
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    Mark Sent
+                  </AppButton>
+                </form>
+
+                <form action={updateQuoteStatusAction}>
+                  <input type="hidden" name="status" value="approved" />
+                  <AppButton
+                    type="submit"
+                    variant="primary"
+                    className="w-full"
+                  >
+                    Mark Approved
+                  </AppButton>
+                </form>
+              </div>
+            </div>
+
+            <div className="border-t border-white/5 pt-5">
+              <div className="space-y-3">
+                <p className={theme.typography.cardTitle}>Quote Management</p>
+
+                <form action={duplicateQuoteAction}>
+                  <AppButton
+                    type="submit"
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    Duplicate Quote
+                  </AppButton>
+                </form>
+
+                <form action={createQuoteRevisionAction}>
+                  <AppButton
+                    type="submit"
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    Create Revision
+                  </AppButton>
+                </form>
+
+                <form action={archiveQuoteAction}>
+                  <AppButton
+                    type="submit"
+                    variant="danger"
+                    className="w-full"
+                  >
+                    Archive Quote
+                  </AppButton>
+                </form>
+              </div>
+            </div>
           </div>
 
           <div className="mt-6 border-t border-white/5 pt-6 text-sm text-[#9EA3AA]">
             <p>
-              Quote totals, transformer planning, distribution guidance, and
-              capacity suggestions are active.
+              Proposal exports, status controls, revisions, duplication, and
+              quote management tools are active.
             </p>
           </div>
         </SectionCard>
       </div>
 
-      <aside className="space-y-4">
-        <QuoteTotalsCard totals={totals} />
+      <aside className="sticky top-5 space-y-4 self-start">
+        <QuoteTotalsCard
+  totals={totals}
+  approvedChangeOrderTotal={approvedChangeOrderTotal} />
       </aside>
     </div>
   );
 
   const zonesWorkspace = (
     <SectionCard title="Quote Zones">
-        {zones.length === 0 ? (
-          <p className="text-sm text-[#9EA3AA]">
-            No zones yet. Add your first zone to begin building the estimate.
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {zones.map((zone) => {
-              const zoneTotals = totals.zoneTotals.find(
-                (total) => total.zoneId === zone.id,
-              );
+      {zones.length === 0 ? (
+        <p className="text-sm text-[#9EA3AA]">
+          No zones yet. Add your first zone to begin building the estimate.
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {zones.map((zone) => {
+            const zoneTotals = totals.zoneTotals.find(
+              (total) => total.zoneId === zone.id,
+            );
 
-              const zoneLoad = zoneLoads.find(
-                (load) => load.zoneId === zone.id,
-              );
+            const zoneLoad = zoneLoads.find((load) => load.zoneId === zone.id);
 
-              const zoneItems = quoteItems.filter(
-                (item) => item.zoneId === zone.id,
-              );
+            const zoneItems = quoteItems.filter(
+              (item) => item.zoneId === zone.id,
+            );
 
-              return (
-                <ZoneCard
-                  key={zone.id}
-                  quoteId={quote.id}
-                  zone={zone}
-                  zoneTotals={zoneTotals}
-                  zoneLoad={zoneLoad}
-                  zoneItems={zoneItems}
-                  transformers={transformers}
-                  activeCatalogItems={activeCatalogItems}
-                />
-              );
-            })}
-          </div>
-        )}
-      </SectionCard>
+            return (
+              <ZoneCard
+                key={zone.id}
+                quoteId={quote.id}
+                zone={zone}
+                zoneTotals={zoneTotals}
+                zoneLoad={zoneLoad}
+                zoneItems={zoneItems}
+                transformers={transformers}
+                activeCatalogItems={activeCatalogItems}
+              />
+            );
+          })}
+        </div>
+      )}
+    </SectionCard>
   );
 
   const zonesActions = (
-    <CollapsibleFormSection
-      title="Add Zone"
-      defaultOpen={zones.length === 0}
-    >
+    <CollapsibleFormSection title="Add Zone" defaultOpen={zones.length === 0}>
       <ZoneForm quoteId={quote.id} />
     </CollapsibleFormSection>
   );
 
   const transformersWorkspace = (
     <SectionCard title="Transformers">
-        {transformers.length === 0 ? (
-          <p className="text-sm text-[#9EA3AA]">
-            No transformers added yet. Add your first transformer to begin
-            electrical load planning.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {transformers.map((transformer) => {
-              const load = transformerLoads.find(
-                (summary) => summary.transformerId === transformer.id,
-              );
+      {transformers.length === 0 ? (
+        <p className="text-sm text-[#9EA3AA]">
+          No transformers added yet. Add your first transformer to begin
+          electrical load planning.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {transformers.map((transformer) => {
+            const load = transformerLoads.find(
+              (summary) => summary.transformerId === transformer.id,
+            );
 
-              const assignedWatts = load?.assignedWatts ?? 0;
-              const remainingSafeWatts = load?.remainingSafeWatts ?? 0;
-              const safePercent = load?.loadPercentOfSafeCapacity ?? 0;
-              const overSafe = load?.isOverSafeLoad ?? false;
-              const overCapacity = load?.isOverCapacity ?? false;
+            const assignedWatts = load?.assignedWatts ?? 0;
+            const remainingSafeWatts = load?.remainingSafeWatts ?? 0;
+            const safePercent = load?.loadPercentOfSafeCapacity ?? 0;
+            const overSafe = load?.isOverSafeLoad ?? false;
+            const overCapacity = load?.isOverCapacity ?? false;
 
-              return (
-                <div key={transformer.id} className="rounded-xl border border-white/5 bg-[#23262B] p-2.5 md:p-3">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                    <div>
-                      <p className="font-medium text-[#F5F5F1]">{transformer.name}</p>
+            return (
+              <div
+                key={transformer.id}
+                className={`${theme.surface.secondary} p-2.5 md:p-3`}
+              >
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="font-medium text-[#F5F5F1]">
+                      {transformer.name}
+                    </p>
 
-                      <p className="text-sm text-[#9EA3AA]">
-                        {transformer.capacityWatts}W · {transformer.voltage}V
+                    <p className="text-sm text-[#9EA3AA]">
+                      {transformer.capacityWatts}W · {transformer.voltage}V
+                    </p>
+
+                    {transformer.locationNote ? (
+                      <p className="mt-1 text-xs text-[#5B6068]">
+                        {transformer.locationNote}
                       </p>
-
-                      {transformer.locationNote ? (
-                        <p className="mt-1 text-xs text-[#5B6068]">
-                          {transformer.locationNote}
-                        </p>
-                      ) : null}
-                    </div>
-
-                    <div className="text-right text-xs text-[#9EA3AA]">
-                      <p>Assigned: {assignedWatts.toFixed(2)}W</p>
-                      <p>
-                        Safe Load: {transformer.maxRecommendedLoadWatts}W
-                      </p>
-                      <p>Remaining: {remainingSafeWatts.toFixed(2)}W</p>
-                      <p>{safePercent.toFixed(0)}% of safe load</p>
-                    </div>
+                    ) : null}
                   </div>
 
-                  {overCapacity ? (
-                    <p className="mt-2 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
-                      Over transformer capacity. Reduce load or add another
-                      transformer.
-                    </p>
-                  ) : overSafe ? (
-                    <p className="mt-2 rounded-lg border border-yellow-400/20 bg-yellow-500/10 px-3 py-2 text-xs text-yellow-300">
-                      Over recommended 80% safe load. Consider redistributing
-                      zones.
-                    </p>
-                  ) : (
-                    <p className="mt-2 rounded-lg border border-green-400/20 bg-green-500/10 px-3 py-2 text-xs text-green-300">
-                      Within recommended safe load.
-                    </p>
-                  )}
-
-                  <form action={deleteTransformerAction} className="mt-2">
-                    <input
-                      type="hidden"
-                      name="transformerId"
-                      value={transformer.id}
-                    />
-
-                    <button
-                      type="submit"
-                      className="w-full rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/20"
-                    >
-                      Delete Transformer
-                    </button>
-                  </form>
+                  <div className="text-right text-xs text-[#9EA3AA]">
+                    <p>Assigned: {assignedWatts.toFixed(2)}W</p>
+                    <p>Safe Load: {transformer.maxRecommendedLoadWatts}W</p>
+                    <p>Remaining: {remainingSafeWatts.toFixed(2)}W</p>
+                    <p>{safePercent.toFixed(0)}% of safe load</p>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </SectionCard>
+
+                {overCapacity ? (
+                  <p className="mt-2 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                    Over transformer capacity. Reduce load or add another
+                    transformer.
+                  </p>
+                ) : overSafe ? (
+                  <p className="mt-2 rounded-lg border border-yellow-400/20 bg-yellow-500/10 px-3 py-2 text-xs text-yellow-300">
+                    Over recommended 80% safe load. Consider redistributing
+                    zones.
+                  </p>
+                ) : (
+                  <p className="mt-2 rounded-lg border border-green-400/20 bg-green-500/10 px-3 py-2 text-xs text-green-300">
+                    Within recommended safe load.
+                  </p>
+                )}
+
+                <form action={deleteTransformerAction} className="mt-2">
+                  <input
+                    type="hidden"
+                    name="transformerId"
+                    value={transformer.id}
+                  />
+
+                  <button
+                    type="submit"
+                    className="w-full rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/20"
+                  >
+                    Delete Transformer
+                  </button>
+                </form>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </SectionCard>
   );
 
   const transformersActions = (
@@ -416,55 +684,53 @@ export default async function QuoteDetailPage({
           </p>
         ) : (
           <div className="space-y-3">
-            {capacitySuggestions.map((suggestion) => {
-              return (
-                <div
-                  key={suggestion.transformerId}
-                  className="rounded-lg border border-white/5 bg-[#23262B] p-3"
-                >
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium">
-                      {suggestion.transformerName}
-                    </p>
-
-                    <StatusPill
-                      tone={
-                        suggestion.suggestedAction === "add-transformer"
-                          ? "danger"
-                          : suggestion.suggestedAction === "upgrade"
-                            ? "warning"
-                            : suggestion.suggestedAction === "watch"
-                              ? "warning"
-                              : "success"
-                      }
-                    >
-                      {suggestion.suggestedAction.replace("-", " ")}
-                    </StatusPill>
-                  </div>
-
-                  <div className="space-y-1 text-xs text-[#9EA3AA]">
-                    <div className="flex justify-between gap-3">
-                      <span>Assigned</span>
-                      <span>{suggestion.assignedWatts.toFixed(2)}W</span>
-                    </div>
-
-                    <div className="flex justify-between gap-3">
-                      <span>Safe Capacity</span>
-                      <span>{suggestion.safeCapacityWatts.toFixed(2)}W</span>
-                    </div>
-
-                    <div className="flex justify-between gap-3">
-                      <span>Remaining Safe</span>
-                      <span>{suggestion.remainingSafeWatts.toFixed(2)}W</span>
-                    </div>
-                  </div>
-
-                  <p className="mt-2 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-xs text-[#9EA3AA]">
-                    {suggestion.message}
+            {capacitySuggestions.map((suggestion) => (
+              <div
+                key={suggestion.transformerId}
+                className={`${theme.surface.secondary} p-3`}
+              >
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="text-sm font-medium">
+                    {suggestion.transformerName}
                   </p>
+
+                  <StatusPill
+                    tone={
+                      suggestion.suggestedAction === "add-transformer"
+                        ? "danger"
+                        : suggestion.suggestedAction === "upgrade"
+                          ? "warning"
+                          : suggestion.suggestedAction === "watch"
+                            ? "warning"
+                            : "success"
+                    }
+                  >
+                    {suggestion.suggestedAction.replace("-", " ")}
+                  </StatusPill>
                 </div>
-              );
-            })}
+
+                <div className="space-y-1 text-xs text-[#9EA3AA]">
+                  <div className="flex justify-between gap-3">
+                    <span>Assigned</span>
+                    <span>{suggestion.assignedWatts.toFixed(2)}W</span>
+                  </div>
+
+                  <div className="flex justify-between gap-3">
+                    <span>Safe Capacity</span>
+                    <span>{suggestion.safeCapacityWatts.toFixed(2)}W</span>
+                  </div>
+
+                  <div className="flex justify-between gap-3">
+                    <span>Remaining Safe</span>
+                    <span>{suggestion.remainingSafeWatts.toFixed(2)}W</span>
+                  </div>
+                </div>
+
+                <p className="mt-2 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-xs text-[#9EA3AA]">
+                  {suggestion.message}
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </SectionCard>
@@ -474,215 +740,99 @@ export default async function QuoteDetailPage({
   );
 
   const detailsWorkspace = (
-  <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-    <div className="mb-4 flex items-center justify-between">
-      <h2 className="font-medium text-[#F5F5F1]">Quote Details</h2>
+    <AppSection
+      title="Quote Details"
+      description="Manage quote configuration, scope details, and proposal information."
+    >
+      <div className="mb-4 flex justify-end">
+        <StatusPill>{quote.status}</StatusPill>
+      </div>
 
-      <StatusPill>{quote.status}</StatusPill>
-    </div>
+      {quoteLocked ? (
+        <div className={theme.surface.warning}>
+          <p className="text-sm text-yellow-300">
+            This quote is locked. Create a revision before editing quote
+            details.
+          </p>
+        </div>
+      ) : null}
 
-    <form action={updateQuoteAction} className="space-y-4">
-      <input type="hidden" name="clientId" value={quote.clientId} />
+      <form action={updateQuoteAction} className={theme.form.stack}>
+        <input type="hidden" name="clientId" value={quote.clientId} />
 
-      <div>
-        <label htmlFor="quoteType" className="text-sm font-medium text-[#F5F5F1]">
-          Quote Type
-        </label>
-
-        <select
+        <FormField
           id="quoteType"
-          name="quoteType"
-          defaultValue={quote.quoteType}
-          className="mt-1 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
+          label="Quote Type"
+          helperText="Select whether this proposal is indoor or outdoor focused."
         >
-          <option value="outdoor">Outdoor</option>
-          <option value="indoor">Indoor</option>
-        </select>
-      </div>
+          <AppSelect
+            id="quoteType"
+            name="quoteType"
+            defaultValue={quote.quoteType}
+            disabled={quoteLocked}
+          >
+            <option value="outdoor">Outdoor</option>
+            <option value="indoor">Indoor</option>
+          </AppSelect>
+        </FormField>
 
-      <div>
-        <label htmlFor="scope" className="text-sm font-medium text-[#F5F5F1]">
-          Scope
-        </label>
-
-        <textarea
+        <FormField
           id="scope"
-          name="scope"
-          defaultValue={quote.scope}
-          className="mt-1 min-h-28 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] placeholder:text-[#5B6068] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-        />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label htmlFor="discountType" className="text-sm font-medium text-[#F5F5F1]">
-            Discount Type
-          </label>
-
-          <select
-            id="discountType"
-            name="discountType"
-            defaultValue={quote.discountType}
-            className="mt-1 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-          >
-            <option value="none">None</option>
-            <option value="fixed">Fixed $</option>
-            <option value="percentage">Percentage %</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="discountValue" className="text-sm font-medium text-[#F5F5F1]">
-            Discount Value
-          </label>
-
-          <input
-            id="discountValue"
-            name="discountValue"
-            type="number"
-            step="0.01"
-            defaultValue={quote.discountValue}
-            className="mt-1 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] placeholder:text-[#5B6068] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
+          label="Project Scope"
+          helperText="Internal project notes and high-level proposal scope."
+        >
+          <AppTextarea
+            id="scope"
+            name="scope"
+            defaultValue={quote.scope}
+            className="min-h-32"
+            disabled={quoteLocked}
           />
-        </div>
+        </FormField>
+
+        <AppButton
+          type="submit"
+          variant="primary"
+          className="w-full"
+          disabled={quoteLocked}
+        >
+          {quoteLocked ? "Quote Locked" : "Save Quote"}
+        </AppButton>
+      </form>
+    </AppSection>
+  );
+
+  return (
+    <PageContainer>
+      <div className="mb-4">
+        <Link
+          href="/quotes"
+          className="text-sm text-[#9EA3AA] transition-colors hover:text-[#F5F5F1]"
+        >
+          ← Back to Quotes
+        </Link>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label htmlFor="depositType" className="text-sm font-medium text-[#F5F5F1]">
-            Deposit Type
-          </label>
+      <PageHeader
+        title={`${quote.quoteNumber} Rev ${quote.revisionNumber}`}
+        description={`${quote.clientName} · ${
+          quote.clientSiteAddress || "No site address"
+        }`}
+      />
 
-          <select
-            id="depositType"
-            name="depositType"
-            defaultValue={quote.depositType}
-            className="mt-1 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-          >
-            <option value="none">None</option>
-            <option value="fixed">Fixed $</option>
-            <option value="percentage">Percentage %</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="depositValue" className="text-sm font-medium text-[#F5F5F1]">
-            Deposit Value
-          </label>
-
-          <input
-            id="depositValue"
-            name="depositValue"
-            type="number"
-            step="0.01"
-            defaultValue={quote.depositValue}
-            className="mt-1 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] placeholder:text-[#5B6068] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-          />
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label
-            htmlFor="quoteLevelLabourHours"
-            className="text-sm font-medium text-[#F5F5F1]"
-          >
-            Quote-Level Labour Hours
-          </label>
-
-          <input
-            id="quoteLevelLabourHours"
-            name="quoteLevelLabourHours"
-            type="number"
-            step="0.01"
-            defaultValue={quote.quoteLevelLabourHours}
-            className="mt-1 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] placeholder:text-[#5B6068] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="quoteLevelHourlyRate"
-            className="text-sm font-medium text-[#F5F5F1]"
-          >
-            Hourly Rate
-          </label>
-
-          <input
-            id="quoteLevelHourlyRate"
-            name="quoteLevelHourlyRate"
-            type="number"
-            step="0.01"
-            defaultValue={quote.quoteLevelHourlyRate}
-            className="mt-1 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] placeholder:text-[#5B6068] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="clientNotes" className="text-sm font-medium text-[#F5F5F1]">
-          Client-Facing Notes
-        </label>
-
-        <textarea
-          id="clientNotes"
-          name="clientNotes"
-          defaultValue={quote.clientNotes || ""}
-          className="mt-1 min-h-20 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] placeholder:text-[#5B6068] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="internalNotes" className="text-sm font-medium text-[#F5F5F1]">
-          Internal Notes
-        </label>
-
-        <textarea
-          id="internalNotes"
-          name="internalNotes"
-          defaultValue={quote.internalNotes || ""}
-          className="mt-1 min-h-20 w-full rounded-xl border border-white/5 bg-[#23262B] px-3 py-2 text-sm text-[#F5F5F1] placeholder:text-[#5B6068] focus:border-amber-500/40 focus:outline-none focus:ring-4 focus:ring-amber-500/10"
-        />
-      </div>
-
-      <button
-        type="submit"
-        className="w-full rounded-xl bg-gradient-to-b from-[#E2B15A] to-[#D88B2D] px-4 py-2 text-sm font-medium text-[#0D0E10] shadow-sm transition-all duration-200 hover:shadow-[0_0_18px_rgba(216,139,45,0.24)]"
-      >
-        Save Quote
-      </button>
-    </form>
-  </section>
-);
-
-return (
-  <div className="min-h-screen bg-[#0D0E10] px-3 py-4 text-[#F5F5F1] md:px-6 md:py-6">
-    <div className="mb-4">
-      <Link
-        href="/quotes"
-        className="text-sm text-[#9EA3AA] transition-colors hover:text-[#F5F5F1]"
-      >
-        ← Back to Quotes
-      </Link>
-    </div>
-
-    <PageHeader
-      title={`${quote.quoteNumber} Rev ${quote.revisionNumber}`}
-      description={`${quote.clientName} · ${
-        quote.clientSiteAddress || "No site address"
-      }`}
-    />
-
-    <QuoteWorkspaceNav
-      overview={{ content: overview }}
-      zones={{ content: zonesWorkspace, actions: zonesActions }}
-      transformers={{
-        content: transformersWorkspace,
-        actions: transformersActions,
-      }}
-      engineering={{ content: engineeringWorkspace }}
-      details={{ content: detailsWorkspace }}
-    />
-  </div>
-);
+      <QuoteWorkspaceNav
+        overview={{ content: overview }}
+        zones={{
+          content: zonesWorkspace,
+          actions: quoteLocked ? undefined : zonesActions,
+        }}
+        transformers={{
+          content: transformersWorkspace,
+          actions: quoteLocked ? undefined : transformersActions,
+        }}
+        engineering={{ content: engineeringWorkspace }}
+        details={{ content: detailsWorkspace }}
+      />
+    </PageContainer>
+  );
 }

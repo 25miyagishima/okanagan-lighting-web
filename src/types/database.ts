@@ -149,6 +149,74 @@ export type Transformer = {
   updatedAt: string;
 };
 
+export type ChangeOrder = {
+  id: string;
+
+  quoteId: string;
+
+  changeOrderNumber: string;
+
+  title: string;
+
+  description: string | null;
+
+  status: string;
+
+  subtotal: number;
+
+  taxTotal: number;
+
+  grandTotal: number;
+
+  approvedAt: string | null;
+
+  createdAt: string;
+
+  updatedAt: string;
+};
+
+export type QuoteAcceptance = {
+  id: string;
+
+  quoteId: string;
+
+  acceptedByName: string;
+
+  acceptedByEmail: string | null;
+
+  acceptedAt: string;
+
+  clientSignature: string | null;
+
+  acceptanceNotes: string | null;
+
+  depositAcknowledged: boolean;
+
+  termsAcknowledged: boolean;
+
+  createdAt: string;
+};
+
+export type InstallReadiness = {
+  id: string;
+  quoteId: string;
+
+  materialsReady: boolean;
+  transformersReady: boolean;
+  clientConfirmed: boolean;
+  siteAccessConfirmed: boolean;
+  installDateConfirmed: boolean;
+  crewAssigned: boolean;
+
+  readinessNotes: string | null;
+
+  readyForInstall: boolean;
+  readyAt: string | null;
+
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type Job = {
   id: string;
   clientId: string;

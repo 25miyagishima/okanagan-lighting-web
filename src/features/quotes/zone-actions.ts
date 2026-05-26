@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { Zone } from "@/types/database";
+import { ensureQuoteEditable } from "@/features/quotes/quote-actions";
 
 type ZoneRow = {
   id: string;
@@ -62,6 +63,16 @@ export async function getZonesByQuoteId(quoteId: string): Promise<Zone[]> {
 }
 
 export async function createZone(quoteId: string, formData: FormData) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before adding zones.",
+    };
+  }
+
   const supabase = await createClient();
 
   const name = String(formData.get("name") ?? "").trim();
@@ -116,6 +127,16 @@ export async function updateZone(
   quoteId: string,
   formData: FormData,
 ) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before editing zones.",
+    };
+  }
+
   const supabase = await createClient();
 
   const name = String(formData.get("name") ?? "").trim();
@@ -167,6 +188,16 @@ export async function assignZoneTransformer(
   quoteId: string,
   formData: FormData,
 ) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before changing transformer assignments.",
+    };
+  }
+
   const supabase = await createClient();
 
   const transformerIdValue = String(
@@ -201,6 +232,16 @@ export async function assignZoneTransformer(
 }
 
 export async function deleteZone(zoneId: string, quoteId: string) {
+  const editableCheck = await ensureQuoteEditable(quoteId);
+
+  if (!editableCheck.editable) {
+    return {
+      error:
+        editableCheck.error ??
+        "This quote is locked. Create a revision before deleting zones.",
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase

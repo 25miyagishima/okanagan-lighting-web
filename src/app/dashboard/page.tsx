@@ -1,111 +1,112 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { StatusPill } from "@/components/status-pill";
+import { AppSection } from "@/components/ui/app-section";
+import { EmptyState } from "@/components/ui/empty-state";
+import { MetricCard } from "@/components/ui/metric-card";
+import { PageContainer } from "@/components/ui/page-container";
+import { theme } from "@/styles/theme";
 import { getDashboardMetrics } from "@/features/dashboard/dashboard-actions";
 
 export default async function DashboardPage() {
   const metrics = await getDashboardMetrics();
 
   return (
-    <div className="min-h-screen bg-[#0D0E10] px-3 py-4 text-[#F5F5F1] md:px-6 md:py-6">
+    <PageContainer>
       <PageHeader
+        eyebrow="Overview"
         title="Dashboard"
         description="Today’s quotes, upcoming installs, approvals, unpaid invoices, and follow-ups."
       />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <p className="text-sm text-[#9EA3AA]">Total Clients</p>
-          <p className="mt-2 text-3xl font-semibold text-[#F5F5F1]">
-            {metrics.totalClients}
-          </p>
-        </section>
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard label="Total Clients" value={metrics.totalClients} />
 
-        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <p className="text-sm text-[#9EA3AA]">Leads</p>
-          <p className="mt-2 text-3xl font-semibold text-[#F5F5F1]">
-            {metrics.leadClients}
-          </p>
-        </section>
+        <MetricCard
+          label="Leads"
+          value={metrics.leadClients}
+          tone="brand"
+        />
 
-        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <p className="text-sm text-[#9EA3AA]">Active Clients</p>
-          <p className="mt-2 text-3xl font-semibold text-[#F5F5F1]">
-            {metrics.activeClients}
-          </p>
-        </section>
+        <MetricCard
+          label="Active Clients"
+          value={metrics.activeClients}
+          tone="success"
+        />
 
-        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <p className="text-sm text-[#9EA3AA]">Archived</p>
-          <p className="mt-2 text-3xl font-semibold text-[#F5F5F1]">
-            {metrics.archivedClients}
-          </p>
-        </section>
+        <MetricCard
+          label="Archived"
+          value={metrics.archivedClients}
+        />
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-medium text-[#F5F5F1]">Recent Clients</h2>
-
+      <div className="grid gap-5 lg:grid-cols-2">
+        <AppSection
+          title="Recent Clients"
+          description="Latest client and lead records added to the system."
+        >
+          <div className="mb-4 flex justify-end">
             <Link
               href="/clients"
-              className="text-sm text-[#D88B2D] transition-colors hover:text-[#E2B15A]"
+              className={`${theme.button.ghost} px-0 sm:px-3`}
             >
               View all
             </Link>
           </div>
 
           {metrics.recentClients.length === 0 ? (
-            <p className="text-sm text-[#9EA3AA]">
-              No clients yet. Add your first client to begin.
-            </p>
+            <EmptyState
+              title="No clients yet"
+              description="Add your first client to begin building quotes, proposals, and project workflows."
+            />
           ) : (
             <div className="space-y-3">
               {metrics.recentClients.map((client) => (
                 <Link
                   key={client.id}
                   href={`/clients/${client.id}`}
-                  className="block rounded-xl border border-white/5 bg-[#23262B] p-3 transition-colors hover:bg-white/[0.04]"
+                  className="block rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 transition-all duration-200 hover:border-[#D88B2D]/25 hover:bg-white/[0.045]"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium text-[#F5F5F1]">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-[#F5F5F1]">
                         {client.name}
                       </p>
-                      <p className="text-sm text-[#9EA3AA]">
+
+                      <p className="mt-1 text-sm leading-relaxed text-[#A7ABB1]">
                         {client.siteAddress || "No site address"}
                       </p>
                     </div>
 
-                    <StatusPill>{client.status}</StatusPill>
+                    <div className="shrink-0">
+                      <StatusPill>{client.status}</StatusPill>
+                    </div>
                   </div>
                 </Link>
               ))}
             </div>
           )}
-        </section>
+        </AppSection>
 
-        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <h2 className="mb-4 font-medium text-[#F5F5F1]">
-            Upcoming Workflow
-          </h2>
-
-          <div className="space-y-3 text-sm text-[#9EA3AA]">
-            <div className="rounded-xl border border-white/5 bg-[#23262B] p-3">
-              Quotes will appear here in Phase 6.
+        <AppSection
+          title="Upcoming Workflow"
+          description="Operational modules that will continue expanding as the platform grows."
+        >
+          <div className="space-y-3 text-sm text-[#A7ABB1]">
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 leading-relaxed">
+              Quotes, proposals, and PDF exports are active.
             </div>
 
-            <div className="rounded-xl border border-white/5 bg-[#23262B] p-3">
-              Jobs will appear here in Phase 9.
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 leading-relaxed">
+              Jobs and install workflows will continue expanding next.
             </div>
 
-            <div className="rounded-xl border border-white/5 bg-[#23262B] p-3">
-              Invoices will appear here in Phase 10.
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 leading-relaxed">
+              Invoices and payment tracking will build from the quote system.
             </div>
           </div>
-        </section>
+        </AppSection>
       </div>
-    </div>
+    </PageContainer>
   );
 }

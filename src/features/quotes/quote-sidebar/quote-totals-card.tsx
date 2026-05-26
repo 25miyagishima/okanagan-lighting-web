@@ -4,9 +4,16 @@ import { formatCurrency } from "@/lib/utils";
 
 type QuoteTotalsCardProps = {
   totals: QuoteTotals;
+  approvedChangeOrderTotal?: number;
 };
 
-export function QuoteTotalsCard({ totals }: QuoteTotalsCardProps) {
+export function QuoteTotalsCard({
+  totals,
+  approvedChangeOrderTotal = 0,
+}: QuoteTotalsCardProps) {
+  const revisedProjectTotal =
+    totals.total + approvedChangeOrderTotal;
+
   return (
     <SectionCard title="Quote Totals">
       <div className="space-y-2 text-sm">
@@ -53,12 +60,36 @@ export function QuoteTotalsCard({ totals }: QuoteTotalsCardProps) {
         </div>
 
         <div className="flex justify-between gap-3 border-t border-white/5 pt-3 text-base font-semibold">
-          <span className="text-[#F5F5F1]">Total</span>
+          <span className="text-[#F5F5F1]">Original Total</span>
 
           <span className="text-[#E2B15A]">
             {formatCurrency(totals.total)}
           </span>
         </div>
+
+        {approvedChangeOrderTotal > 0 ? (
+          <>
+            <div className="flex justify-between gap-3">
+              <span className="text-[#9EA3AA]">
+                Approved Change Orders
+              </span>
+
+              <span className="text-[#E2B15A]">
+                {formatCurrency(approvedChangeOrderTotal)}
+              </span>
+            </div>
+
+            <div className="flex justify-between gap-3 rounded-xl border border-[#D88B2D]/20 bg-[#D88B2D]/10 px-3 py-3 text-base font-semibold">
+              <span className="text-[#F5F5F1]">
+                Revised Project Total
+              </span>
+
+              <span className="text-[#E2B15A]">
+                {formatCurrency(revisedProjectTotal)}
+              </span>
+            </div>
+          </>
+        ) : null}
 
         <div className="flex justify-between gap-3">
           <span className="text-[#9EA3AA]">Deposit</span>

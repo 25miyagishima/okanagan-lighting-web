@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AppSidebar } from "@/components/app-sidebar";
 
 export const metadata: Metadata = {
   title: "Okanagan Lighting",
@@ -14,14 +13,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-[#0D0E10] text-[#F5F5F1]">
-        <div className="flex min-h-screen bg-[#0D0E10]">
-          <AppSidebar />
-
-          <main className="w-full bg-[#0D0E10]">
-            {children}
-          </main>
-        </div>
+      <body className="bg-[#0D0E10] text-[#F5F5F1] antialiased">
+        {children}
       </body>
     </html>
   );

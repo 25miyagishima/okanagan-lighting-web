@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { formStyles } from "@/styles/form-styles";
+import { AppButton } from "@/components/ui/app-button";
+import { AppCard } from "@/components/ui/app-card";
+import { AppInput } from "@/components/ui/app-input";
+import { AppTextarea } from "@/components/ui/app-textarea";
+import { FormField } from "@/components/ui/form-field";
+import { theme } from "@/styles/theme";
 import { createClientRecord } from "./client-actions";
 
 export function ClientForm() {
@@ -23,88 +28,93 @@ export function ClientForm() {
   }
 
   return (
-    <form
-      action={handleSubmit}
-      className="space-y-4 rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]"
-    >
-      <div>
-        <label htmlFor="name" className={formStyles.label}>
-          Client Name
-        </label>
+    <AppCard>
+      <form action={handleSubmit} className={theme.form.stack}>
+        <div>
+          <p className={theme.typography.eyebrow}>
+            Client Management
+          </p>
 
-        <input
-          id="name"
-          name="name"
-          required
-          className={formStyles.input}
-          placeholder="Client name"
-        />
-      </div>
+          <h2 className="mt-1 font-serif text-2xl font-medium tracking-[-0.03em] text-[#F5F5F1]">
+            New Client
+          </h2>
 
-      <div>
-        <label htmlFor="phone" className={formStyles.label}>
-          Phone
-        </label>
+          <p className="mt-2 text-sm leading-relaxed text-[#A7ABB1]">
+            Add leads and active clients to begin building quotes,
+            proposals, invoices, and installation workflows.
+          </p>
+        </div>
 
-        <input
-          id="phone"
-          name="phone"
-          className={formStyles.input}
-          placeholder="Phone number"
-        />
-      </div>
+        <div className={theme.surface.goldLine} />
 
-      <div>
-        <label htmlFor="email" className={formStyles.label}>
-          Email
-        </label>
+        <FormField id="name" label="Client Name">
+          <AppInput
+            id="name"
+            name="name"
+            required
+            placeholder="Client name"
+          />
+        </FormField>
 
-        <input
-          id="email"
-          name="email"
-          type="email"
-          className={formStyles.input}
-          placeholder="Email address"
-        />
-      </div>
+        <FormField id="phone" label="Phone">
+          <AppInput
+            id="phone"
+            name="phone"
+            placeholder="Phone number"
+          />
+        </FormField>
 
-      <div>
-        <label htmlFor="siteAddress" className={formStyles.label}>
-          Site Address
-        </label>
+        <FormField id="email" label="Email">
+          <AppInput
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email address"
+          />
+        </FormField>
 
-        <input
-          id="siteAddress"
-          name="siteAddress"
-          className={formStyles.input}
-          placeholder="Project address"
-        />
-      </div>
+        <FormField id="siteAddress" label="Site Address">
+          <AppInput
+            id="siteAddress"
+            name="siteAddress"
+            placeholder="Project address"
+          />
+        </FormField>
 
-      <div>
-        <label htmlFor="notes" className={formStyles.label}>
-          Notes
-        </label>
+        <FormField id="notes" label="Notes">
+          <AppTextarea
+            id="notes"
+            name="notes"
+            placeholder="Client notes"
+          />
+        </FormField>
 
-        <textarea
-          id="notes"
-          name="notes"
-          className={formStyles.textarea}
-          placeholder="Client notes"
-        />
-      </div>
+        {errorMessage ? (
+          <div className={theme.surface.danger}>
+            <p className="text-sm text-red-300">
+              {errorMessage}
+            </p>
+          </div>
+        ) : null}
 
-      {errorMessage ? (
-        <p className={formStyles.errorText}>{errorMessage}</p>
-      ) : null}
+        {successMessage ? (
+          <div className={theme.surface.success}>
+            <p className="text-sm text-green-300">
+              {successMessage}
+            </p>
+          </div>
+        ) : null}
 
-      {successMessage ? (
-        <p className={formStyles.successText}>{successMessage}</p>
-      ) : null}
-
-      <button type="submit" className={formStyles.primaryButton}>
-        Save Client
-      </button>
-    </form>
+        <div className={theme.form.actions}>
+          <AppButton
+            type="submit"
+            variant="primary"
+            className="w-full sm:w-auto"
+          >
+            Save Client
+          </AppButton>
+        </div>
+      </form>
+    </AppCard>
   );
 }

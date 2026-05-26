@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { StatusPill } from "@/components/status-pill";
+import { AppSection } from "@/components/ui/app-section";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageContainer } from "@/components/ui/page-container";
+import { theme } from "@/styles/theme";
 import { ClientForm } from "@/features/clients/client-form";
 import { getClients } from "@/features/clients/client-actions";
 
@@ -8,8 +12,9 @@ export default async function ClientsPage() {
   const clients = await getClients();
 
   return (
-    <div className="min-h-screen bg-[#0D0E10] px-3 py-4 text-[#F5F5F1] md:px-6 md:py-6">
+    <PageContainer>
       <PageHeader
+        eyebrow="Contacts"
         title="Clients / Leads"
         description="Create, edit, and manage leads and active clients."
       />
@@ -17,49 +22,49 @@ export default async function ClientsPage() {
       <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
         <ClientForm />
 
-        <section className="rounded-2xl border border-white/5 bg-[#181A1D] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.32)]">
-          <h2 className="mb-4 font-medium text-[#F5F5F1]">
-            Client List
-          </h2>
-
+        <AppSection
+          title="Client List"
+          description="All leads and active clients currently saved in the system."
+        >
           {clients.length === 0 ? (
-            <p className="text-sm text-[#9EA3AA]">
-              No clients yet. Add your first client using the form.
-            </p>
+            <EmptyState
+              title="No clients yet"
+              description="Add your first client using the form to begin building quotes, proposals, and project workflows."
+            />
           ) : (
             <div className="space-y-3">
               {clients.map((client) => (
                 <Link
                   key={client.id}
                   href={`/clients/${client.id}`}
-                  className="block rounded-xl border border-white/5 bg-[#23262B] p-3 transition-colors hover:bg-white/[0.04]"
+                  className="block rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 transition-all duration-200 hover:border-[#D88B2D]/25 hover:bg-white/[0.045]"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium text-[#F5F5F1]">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-[#F5F5F1]">
                         {client.name}
                       </p>
 
-                      <p className="text-sm text-[#9EA3AA]">
+                      <p className="mt-1 text-sm leading-relaxed text-[#A7ABB1]">
                         {client.siteAddress || "No site address"}
                       </p>
+
+                      <div className="mt-2 text-xs text-[#626872]">
+                        {client.phone || "No phone"} ·{" "}
+                        {client.email || "No email"}
+                      </div>
                     </div>
 
-                    <StatusPill>
-                      {client.status}
-                    </StatusPill>
-                  </div>
-
-                  <div className="mt-2 text-xs text-[#5B6068]">
-                    {client.phone || "No phone"} ·{" "}
-                    {client.email || "No email"}
+                    <div className="shrink-0">
+                      <StatusPill>{client.status}</StatusPill>
+                    </div>
                   </div>
                 </Link>
               ))}
             </div>
           )}
-        </section>
+        </AppSection>
       </div>
-    </div>
+    </PageContainer>
   );
 }
