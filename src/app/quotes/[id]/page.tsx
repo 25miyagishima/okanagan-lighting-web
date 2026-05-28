@@ -821,18 +821,18 @@ const revisedProjectTotal =
       />
 
       <QuoteWorkspaceNav
-        overview={{ content: overview }}
-        zones={{
-          content: zonesWorkspace,
-          actions: quoteLocked ? undefined : zonesActions,
-        }}
-        transformers={{
-          content: transformersWorkspace,
-          actions: quoteLocked ? undefined : transformersActions,
-        }}
-        engineering={{ content: engineeringWorkspace }}
-        details={{ content: detailsWorkspace }}
-      />
+  overview={{ content: overview }}
+  transformers={{
+    content: transformersWorkspace,
+    actions: quoteLocked ? undefined : transformersActions,
+  }}
+  zones={{
+    content: zonesWorkspace,
+    actions: quoteLocked ? undefined : zonesActions,
+  }}
+  engineering={{ content: engineeringWorkspace }}
+  details={{ content: detailsWorkspace }}
+/>
     </PageContainer>
   );
 }

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogoutButton } from "@/features/auth/logout-button";
 import { theme } from "@/styles/theme";
 
 const navItems = [
@@ -19,6 +18,8 @@ const navItems = [
 function SidebarLogo() {
   const gradientId = "okltsSidebarRidgeGold";
   const filterId = "okltsSidebarRidgeGlow";
+  const ridgePath =
+    "M250 386 C360 350, 475 326, 565 318 C642 312, 690 330, 760 318 C820 308, 860 280, 920 282 C990 284, 1050 318, 1202 326 C1285 328, 1355 340, 1450 388";
 
   return (
     <Link
@@ -58,12 +59,7 @@ function SidebarLogo() {
           </defs>
 
           <path
-            d="M250 386
-               C360 350, 475 326, 565 318
-               C642 312, 690 330, 760 318
-               C820 308, 860 280, 920 282
-               C990 284, 1050 318, 1202 326
-               C1285 328, 1355 340, 1450 388"
+            d={ridgePath}
             fill="none"
             stroke={`url(#${gradientId})`}
             strokeWidth="5"
@@ -73,12 +69,7 @@ function SidebarLogo() {
           />
 
           <path
-            d="M250 386
-               C360 350, 475 326, 565 318
-               C642 312, 690 330, 760 318
-               C820 308, 860 280, 920 282
-               C990 284, 1050 318, 1202 326
-               C1285 328, 1355 340, 1450 388"
+            d={ridgePath}
             fill="none"
             stroke="#FFE8A3"
             strokeWidth="2"
@@ -143,10 +134,6 @@ export function AppSidebar() {
             Proposal exports, engineering tools, media uploads, and workflow
             systems are active.
           </p>
-        </div>
-
-        <div className="mt-4">
-          <LogoutButton />
         </div>
       </div>
     </aside>

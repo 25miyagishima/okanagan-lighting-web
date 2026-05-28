@@ -1,14 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export function LogoutButton() {
   const router = useRouter();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   async function handleLogout() {
-    const supabase = createClient();
+    if (isSigningOut) return;
 
+    setIsSigningOut(true);
+
+    const supabase = createClient();
     await supabase.auth.signOut();
 
     router.push("/professional-access");
@@ -19,9 +24,10 @@ export function LogoutButton() {
     <button
       type="button"
       onClick={handleLogout}
-      className="w-full rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-left text-sm text-[#9EA3AA] transition-colors hover:bg-red-500/10 hover:text-red-300"
+      disabled={isSigningOut}
+      className="w-full rounded-xl border border-red-400/10 bg-red-500/[0.04] px-3 py-2 text-left text-sm font-medium text-red-300 transition-colors hover:border-red-400/20 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      Sign out
+      {isSigningOut ? "Signing out..." : "Sign out"}
     </button>
   );
 }
