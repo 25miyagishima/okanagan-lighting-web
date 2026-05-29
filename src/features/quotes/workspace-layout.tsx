@@ -1,23 +1,27 @@
 type WorkspaceLayoutProps = {
+  navigation?: React.ReactNode;
   content: React.ReactNode;
   actions?: React.ReactNode;
 };
 
 export function WorkspaceLayout({
+  navigation,
   content,
   actions,
 }: WorkspaceLayoutProps) {
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-5">
-      <div className="min-w-0 space-y-4">
-        {content}
-      </div>
+    <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)_320px] lg:gap-5 xl:grid-cols-[240px_minmax(0,1fr)_340px]">
+      {navigation ? (
+        <aside className="min-w-0 lg:sticky lg:top-5 lg:self-start">
+          {navigation}
+        </aside>
+      ) : null}
+
+      <div className="min-w-0 space-y-4">{content}</div>
 
       {actions ? (
-        <aside className="space-y-4 xl:sticky xl:top-5 xl:self-start">
-          <div className="space-y-4">
-            {actions}
-          </div>
+        <aside className="space-y-4 lg:sticky lg:top-5 lg:self-start">
+          {actions}
         </aside>
       ) : null}
     </div>

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Quote } from "@/types/database";
+import { createJobFromQuote } from "@/features/jobs/job-actions";
 import type {
   CatalogUnitType,
   DepositType,
@@ -771,9 +772,20 @@ export async function updateQuoteStatus(id: string, status: QuoteStatus) {
     };
   }
 
+  if (status === "approved") {
+    const jobResult = await createJobFromQuote(id);
+
+    if ("error" in jobResult) {
+      return {
+        error: jobResult.error,
+      };
+    }
+  }
+
   revalidatePath("/quotes");
   revalidatePath(`/quotes/${id}`);
   revalidatePath("/dashboard");
+  revalidatePath("/jobs");
 
   return {
     success: true,

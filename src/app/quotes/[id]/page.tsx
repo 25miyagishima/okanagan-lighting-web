@@ -277,159 +277,83 @@ const revisedProjectTotal =
           </SectionCard>
         ) : null}
 
-<SectionCard title="Quote Snapshot">
-  <div className="grid gap-3 md:grid-cols-4">
-    <div className={`${theme.surface.secondary} p-3`}>
-      <p className="text-xs text-[#5B6068]">Zones</p>
-      <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
-        {zones.length}
+<SectionCard
+  title="Project Summary"
+  actions={
+    <StatusPill tone={workflowStatusTone}>{quote.status}</StatusPill>
+  }
+>
+  <div className="grid gap-4 md:grid-cols-2">
+    <div className={`${theme.surface.secondary} p-4`}>
+      <p className="text-xs font-medium uppercase tracking-wide text-[#626872]">
+        Quote Type
+      </p>
+      <p className="mt-2 text-base font-semibold capitalize text-[#F5F5F1]">
+        {quote.quoteType}
       </p>
     </div>
 
-    <div className={`${theme.surface.secondary} p-3`}>
-      <p className="text-xs text-[#5B6068]">Transformers</p>
-      <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
-        {transformers.length}
+    <div className={`${theme.surface.secondary} p-4`}>
+      <p className="text-xs font-medium uppercase tracking-wide text-[#626872]">
+        Revision
+      </p>
+      <p className="mt-2 text-base font-semibold text-[#F5F5F1]">
+        Rev {quote.revisionNumber}
       </p>
     </div>
 
-    <div className={`${theme.surface.secondary} p-3`}>
-      <p className="text-xs text-[#5B6068]">System Load</p>
-      <p className="mt-1 text-lg font-semibold text-[#F5F5F1]">
-        {planningSummary.totalSystemWatts.toFixed(2)}W
+    <div className={`${theme.surface.secondary} p-4 md:col-span-2`}>
+      <p className="text-xs font-medium uppercase tracking-wide text-[#626872]">
+        Current Project Value
       </p>
-    </div>
-
-    <div className={`${theme.surface.secondary} p-3`}>
-      <p className="text-xs text-[#5B6068]">Revised Total</p>
-      <p className="mt-1 text-lg font-semibold text-[#E2B15A]">
+      <p className="mt-2 text-3xl font-semibold text-[#E2B15A]">
         {formatCurrency(revisedProjectTotal)}
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-[#9EA3AA]">
+        Includes the original quote total plus approved change orders.
       </p>
     </div>
   </div>
 
-  <div className="mt-4 rounded-xl border border-white/5 bg-white/[0.03] p-3 text-sm text-[#9EA3AA]">
-    {planningSummary.isSystemSafe
-      ? "System looks safe based on current assignments."
-      : "Review electrical planning before finalizing this quote."}
+  <div className="mt-4 rounded-xl border border-white/5 bg-white/[0.03] p-4 text-sm leading-relaxed text-[#9EA3AA]">
+    This overview summarizes the current project stage and value. Technical
+    system details live under Engineering, Transformers, and Zones.
   </div>
 </SectionCard>
 
         {revisionHistory}
 <RevisionComparisonPanel comparison={revisionComparison} />
 
-<ChangeOrderPanel
-  quoteId={quote.id}
-  changeOrders={changeOrders}
-  quoteLocked={quoteLocked}
-/>
-
-<QuoteAcceptancePanel
-  quoteId={quote.id}
-  acceptance={acceptance}
-/>
-
-<InstallReadinessPanel
-  quoteId={quote.id}
-  readiness={installReadiness}
-/>
-
-<JobHandoffPanel summary={jobHandoffSummary} />
-
-        <SectionCard title="Quote Photos">
-          <div className="space-y-4">
-            <QuoteMediaUpload quoteId={quote.id} />
-            <MediaGallery media={quoteMedia} title="Quote Photos" />
-          </div>
-        </SectionCard>
-
         <SectionCard
-          title="Proposal Controls"
-          actions={
-            <StatusPill tone={workflowStatusTone}>{quote.status}</StatusPill>
-          }
-        >
-          <div className="space-y-5">
-            <div className="space-y-3">
-              <p className={theme.typography.cardTitle}>Proposal Documents</p>
+  title="Quote Management"
+  actions={
+    <StatusPill tone={workflowStatusTone}>{quote.status}</StatusPill>
+  }
+>
+  <div className="space-y-3">
+    <form action={duplicateQuoteAction}>
+      <AppButton type="submit" variant="secondary" className="w-full">
+        Duplicate Quote
+      </AppButton>
+    </form>
 
-              <ClientQuotePdfButton quoteId={quote.id} />
-              <MaterialListPdfButton quoteId={quote.id} />
-              <BusinessProfitPdfButton quoteId={quote.id} />
-            </div>
+    <form action={createQuoteRevisionAction}>
+      <AppButton type="submit" variant="secondary" className="w-full">
+        Create Revision
+      </AppButton>
+    </form>
 
-            <div className="border-t border-white/5 pt-5">
-              <div className="space-y-3">
-                <p className={theme.typography.cardTitle}>Status Workflow</p>
+    <form action={archiveQuoteAction}>
+      <AppButton type="submit" variant="danger" className="w-full">
+        Archive Quote
+      </AppButton>
+    </form>
+  </div>
 
-                <form action={updateQuoteStatusAction}>
-                  <input type="hidden" name="status" value="sent" />
-                  <AppButton
-                    type="submit"
-                    variant="secondary"
-                    className="w-full"
-                  >
-                    Mark Sent
-                  </AppButton>
-                </form>
-
-                <form action={updateQuoteStatusAction}>
-                  <input type="hidden" name="status" value="approved" />
-                  <AppButton
-                    type="submit"
-                    variant="primary"
-                    className="w-full"
-                  >
-                    Mark Approved
-                  </AppButton>
-                </form>
-              </div>
-            </div>
-
-            <div className="border-t border-white/5 pt-5">
-              <div className="space-y-3">
-                <p className={theme.typography.cardTitle}>Quote Management</p>
-
-                <form action={duplicateQuoteAction}>
-                  <AppButton
-                    type="submit"
-                    variant="secondary"
-                    className="w-full"
-                  >
-                    Duplicate Quote
-                  </AppButton>
-                </form>
-
-                <form action={createQuoteRevisionAction}>
-                  <AppButton
-                    type="submit"
-                    variant="secondary"
-                    className="w-full"
-                  >
-                    Create Revision
-                  </AppButton>
-                </form>
-
-                <form action={archiveQuoteAction}>
-                  <AppButton
-                    type="submit"
-                    variant="danger"
-                    className="w-full"
-                  >
-                    Archive Quote
-                  </AppButton>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 border-t border-white/5 pt-6 text-sm text-[#9EA3AA]">
-            <p>
-              Proposal exports, status controls, revisions, duplication, and
-              quote management tools are active.
-            </p>
-          </div>
-        </SectionCard>
+  <div className="mt-6 border-t border-white/5 pt-6 text-sm text-[#9EA3AA]">
+    <p>Revisions, duplication, and archive controls are active.</p>
+  </div>
+</SectionCard>
       </div>
 
       <aside className="sticky top-5 space-y-4 self-start">
@@ -739,6 +663,77 @@ const revisedProjectTotal =
     </div>
   );
 
+  const photosWorkspace = (
+  <SectionCard title="Photos / Field Markups">
+    <div className="space-y-4">
+      <QuoteMediaUpload quoteId={quote.id} />
+      <MediaGallery
+        media={quoteMedia}
+        title="Photos / Field Markups"
+      />
+    </div>
+  </SectionCard>
+);
+
+const acceptanceWorkspace = (
+  <div className="space-y-4">
+    <SectionCard
+      title="Proposal Status"
+      actions={
+        <StatusPill tone={workflowStatusTone}>{quote.status}</StatusPill>
+      }
+    >
+      <div className="space-y-3">
+        <p className={theme.typography.cardTitle}>Proposal Workflow</p>
+
+        <form action={updateQuoteStatusAction}>
+          <input type="hidden" name="status" value="sent" />
+          <AppButton type="submit" variant="secondary" className="w-full">
+            Mark Sent
+          </AppButton>
+        </form>
+      </div>
+    </SectionCard>
+
+    <QuoteAcceptancePanel
+      quoteId={quote.id}
+      acceptance={acceptance}
+    />
+  </div>
+);
+
+const installReadinessWorkspace = (
+  <InstallReadinessPanel
+    quoteId={quote.id}
+    readiness={installReadiness}
+  />
+);
+
+const handoffWorkspace = (
+  <JobHandoffPanel summary={jobHandoffSummary} />
+);
+
+const changeOrdersWorkspace = (
+  <ChangeOrderPanel
+    quoteId={quote.id}
+    changeOrders={changeOrders}
+    quoteLocked={quoteLocked}
+  />
+);
+
+const documentsWorkspace = (
+  <AppSection
+    title="Proposal Documents"
+    description="Generate client-facing and internal proposal documents for this quote."
+  >
+    <div className="mt-5 space-y-4">
+      <ClientQuotePdfButton quoteId={quote.id} />
+      <MaterialListPdfButton quoteId={quote.id} />
+      <BusinessProfitPdfButton quoteId={quote.id} />
+    </div>
+  </AppSection>
+);
+
   const detailsWorkspace = (
     <AppSection
       title="Quote Details"
@@ -820,7 +815,7 @@ const revisedProjectTotal =
         }`}
       />
 
-      <QuoteWorkspaceNav
+<QuoteWorkspaceNav
   overview={{ content: overview }}
   transformers={{
     content: transformersWorkspace,
@@ -831,7 +826,13 @@ const revisedProjectTotal =
     actions: quoteLocked ? undefined : zonesActions,
   }}
   engineering={{ content: engineeringWorkspace }}
+  photos={{ content: photosWorkspace }}
+  documents={{ content: documentsWorkspace }}
   details={{ content: detailsWorkspace }}
+  acceptance={{ content: acceptanceWorkspace }}
+  installReadiness={{ content: installReadinessWorkspace }}
+  handoff={{ content: handoffWorkspace }}
+  changeOrders={{ content: changeOrdersWorkspace }}
 />
     </PageContainer>
   );

@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
+import { createJobFromQuote } from "@/features/jobs/job-actions";
 import { createClient } from "@/lib/supabase/server";
 import type { QuoteAcceptance } from "@/types/database";
 
@@ -17,9 +19,7 @@ type QuoteAcceptanceRow = {
   created_at: string;
 };
 
-function mapQuoteAcceptanceRow(
-  row: QuoteAcceptanceRow,
-): QuoteAcceptance {
+function mapQuoteAcceptanceRow(row: QuoteAcceptanceRow): QuoteAcceptance {
   return {
     id: row.id,
     quoteId: row.quote_id,
@@ -141,8 +141,17 @@ export async function acceptQuote(
     };
   }
 
+  const jobResult = await createJobFromQuote(quoteId);
+
+  if ("error" in jobResult) {
+    return {
+      error: jobResult.error,
+    };
+  }
+
   revalidatePath("/quotes");
   revalidatePath(`/quotes/${quoteId}`);
+  revalidatePath("/jobs");
   revalidatePath("/dashboard");
 
   return {

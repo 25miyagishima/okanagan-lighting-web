@@ -8,43 +8,121 @@ type WorkspacePanel = {
   actions?: React.ReactNode;
 };
 
+type WorkflowTab =
+  | "Overview"
+  | "Transformers"
+  | "Zones"
+  | "Engineering"
+  | "Photos"
+  | "Documents"
+  | "Acceptance"
+  | "InstallReadiness"
+  | "Handoff"
+  | "ChangeOrders";
+
+type WorkflowItem = {
+  id: WorkflowTab;
+  label: string;
+  helper: string;
+};
+
+type WorkflowGroup = {
+  title: string;
+  helper: string;
+  items: WorkflowItem[];
+};
+
 type QuoteWorkspaceNavProps = {
   overview: WorkspacePanel;
   zones: WorkspacePanel;
   transformers: WorkspacePanel;
   engineering: WorkspacePanel;
   details: WorkspacePanel;
+
+  photos?: WorkspacePanel;
+  documents?: WorkspacePanel;
+  acceptance?: WorkspacePanel;
+  installReadiness?: WorkspacePanel;
+  handoff?: WorkspacePanel;
+  changeOrders?: WorkspacePanel;
 };
 
-const workflowTabs = [
+const workflowGroups: WorkflowGroup[] = [
   {
-    id: "Setup",
-    label: "Setup",
-    helper: "Client, scope, and quote basics.",
+    title: "Design",
+    helper: "Create the lighting system.",
+    items: [
+      {
+        id: "Overview",
+        label: "Overview",
+        helper: "Client, scope, and quote basics.",
+      },
+      {
+        id: "Transformers",
+        label: "Transformers",
+        helper: "Power planning and system groupings.",
+      },
+      {
+        id: "Zones",
+        label: "Zones",
+        helper: "Fixtures, cable, labour, and materials.",
+      },
+    ],
   },
   {
-    id: "Transformer",
-    label: "Transformer",
-    helper: "Power planning before zone buildout.",
+    title: "Review",
+    helper: "Validate the design.",
+    items: [
+      {
+        id: "Engineering",
+        label: "Engineering",
+        helper: "Totals, loads, and final checks.",
+      },
+      {
+        id: "Photos",
+        label: "Photos / Field Markups",
+        helper: "Consultation photos, existing conditions, and field markups.",
+      },
+    ],
   },
   {
-    id: "Zones",
-    label: "Zones",
-    helper: "Fixtures, cable, labour, and photos.",
+    title: "Proposal",
+    helper: "Prepare client-facing outputs.",
+    items: [
+      {
+        id: "Documents",
+        label: "Documents",
+        helper: "Proposal PDFs, material lists, and document outputs.",
+      },
+      {
+        id: "Acceptance",
+        label: "Acceptance",
+        helper: "Client approval, signature, and acceptance record.",
+      },
+    ],
   },
   {
-    id: "Review",
-    label: "Review",
-    helper: "Totals, engineering, and final checks.",
+    title: "Operations",
+    helper: "Prepare approved work for execution.",
+    items: [
+      {
+        id: "InstallReadiness",
+        label: "Install Readiness",
+        helper: "Confirm materials, access, client readiness, and crew planning.",
+      },
+      {
+        id: "Handoff",
+        label: "Handoff",
+        helper: "Operational summary for installation planning.",
+      },
+      {
+        id: "ChangeOrders",
+        label: "Change Orders",
+        helper: "Approved scope changes and revised project totals.",
+      },
+    ],
   },
-  {
-    id: "Documents",
-    label: "Documents",
-    helper: "PDFs, details, and proposal outputs.",
-  },
-] as const;
-
-type WorkflowTab = (typeof workflowTabs)[number]["id"];
+];
 
 export function QuoteWorkspaceNav({
   overview,
@@ -52,74 +130,107 @@ export function QuoteWorkspaceNav({
   transformers,
   engineering,
   details,
+  photos,
+  documents,
+  acceptance,
+  installReadiness,
+  handoff,
+  changeOrders,
 }: QuoteWorkspaceNavProps) {
-  const [activeTab, setActiveTab] = useState<WorkflowTab>("Setup");
+  const [activeTab, setActiveTab] = useState<WorkflowTab>("Overview");
 
-  const panelByTab: Record<WorkflowTab, WorkspacePanel> = {
-    Setup: overview,
-    Transformer: transformers,
+  const panelByTab: Record<WorkflowTab, WorkspacePanel | undefined> = {
+    Overview: overview,
+    Transformers: transformers,
     Zones: zones,
-    Review: engineering,
-    Documents: details,
+    Engineering: engineering,
+    Photos: photos,
+    Documents: documents ?? details,
+    Acceptance: acceptance,
+    InstallReadiness: installReadiness,
+    Handoff: handoff,
+    ChangeOrders: changeOrders,
   };
 
-  const activePanel = panelByTab[activeTab];
-  const activeTabMeta = workflowTabs.find((tab) => tab.id === activeTab);
+  const activePanel = panelByTab[activeTab] ?? overview;
 
-  return (
-    <div className="space-y-5">
-      <div className="sticky top-0 z-20 -mx-4 border-b border-white/[0.06] bg-[#0D0E10]/92 px-4 pb-3 pt-2 backdrop-blur-xl sm:mx-0 sm:rounded-2xl sm:border sm:bg-[#141618]/92 sm:p-3">
-        <div className="mb-3">
-          <p className="text-xs font-medium uppercase tracking-[0.24em] text-[#D88B2D]">
-            Quote Workflow
-          </p>
-          <p className="mt-1 text-sm text-[#9EA3AA]">
-            {activeTabMeta?.helper}
-          </p>
-        </div>
+  const activeTabMeta = workflowGroups
+    .flatMap((group) => group.items)
+    .find((tab) => tab.id === activeTab);
 
-        <div className="overflow-x-auto">
-          <div className="flex min-w-max gap-2">
-            {workflowTabs.map((tab, index) => {
-              const active = activeTab === tab.id;
+  const navigation = (
+    <div className="rounded-2xl border border-white/[0.06] bg-[#141618]/92 p-3">
+      <div className="mb-4">
+        <p className="text-xs font-medium uppercase tracking-[0.24em] text-[#D88B2D]">
+          Quote Workflow
+        </p>
 
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={[
-                    "flex items-center gap-2 whitespace-nowrap rounded-2xl px-4 py-2.5 text-sm font-medium transition-all duration-200",
-                    active
-                      ? "border border-amber-500/20 bg-gradient-to-r from-amber-500/15 to-transparent text-[#E2B15A] shadow-[0_0_0_1px_rgba(216,139,45,0.08)]"
-                      : "text-[#9EA3AA] hover:bg-white/[0.04] hover:text-[#F5F5F1]",
-                  ].join(" ")}
-                >
-                  <span
+        <p className="mt-1 text-sm leading-relaxed text-[#9EA3AA]">
+          {activeTabMeta?.helper}
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        {workflowGroups.map((group) => (
+          <div key={group.title}>
+            <div className="mb-2 px-2">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#626872]">
+                {group.title}
+              </p>
+
+              <p className="mt-1 text-xs leading-relaxed text-[#7C838C]">
+                {group.helper}
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              {group.items.map((tab) => {
+                const active = activeTab === tab.id;
+                const available = Boolean(panelByTab[tab.id]);
+
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => {
+                      if (available) {
+                        setActiveTab(tab.id);
+                      }
+                    }}
+                    disabled={!available}
                     className={[
-                      "flex h-5 w-5 items-center justify-center rounded-full text-[11px]",
+                      "flex w-full items-center justify-between rounded-2xl px-3 py-2.5 text-left text-sm font-medium transition-all duration-200",
                       active
-                        ? "bg-[#D88B2D]/20 text-[#F7D28B]"
-                        : "bg-white/[0.05] text-[#8D939B]",
+                        ? "border border-amber-500/20 bg-gradient-to-r from-amber-500/15 to-transparent text-[#E2B15A] shadow-[0_0_0_1px_rgba(216,139,45,0.08)]"
+                        : available
+                          ? "text-[#9EA3AA] hover:bg-white/[0.04] hover:text-[#F5F5F1]"
+                          : "cursor-not-allowed text-[#4F555D]",
                     ].join(" ")}
                   >
-                    {index + 1}
-                  </span>
+                    <span>{tab.label}</span>
 
-                  {tab.label}
-                </button>
-              );
-            })}
+                    {!available ? (
+                      <span className="text-[10px] uppercase tracking-[0.16em] text-[#4F555D]">
+                        Soon
+                      </span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
+    </div>
+  );
 
-      <div className="animate-in fade-in duration-200">
-        <WorkspaceLayout
-          content={activePanel.content}
-          actions={activePanel.actions}
-        />
-      </div>
+  return (
+    <div className="animate-in fade-in duration-200">
+      <WorkspaceLayout
+        navigation={navigation}
+        content={activePanel.content}
+        actions={activePanel.actions}
+      />
     </div>
   );
 }

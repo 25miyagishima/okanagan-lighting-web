@@ -59,6 +59,7 @@ export type CatalogItem = {
   updatedAt: string;
   archivedAt: string | null;
 };
+
 export type Quote = {
   id: string;
   clientId: string;

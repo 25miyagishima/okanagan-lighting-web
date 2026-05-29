@@ -15,8 +15,10 @@ export type QuoteStatus =
 export type QuoteType = "indoor" | "outdoor";
 
 export type JobStatus =
+  | "approved"
   | "scheduled"
   | "in_progress"
+  | "installed"
   | "completed"
   | "invoiced"
   | "archived";
