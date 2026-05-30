@@ -306,7 +306,7 @@ function ContactSection() {
           </p>
 
           <div className="space-y-5 text-base text-white/85 md:text-lg">
-            <ContactLine icon={Mail} text="systems@okanaganlighting.com" />
+            <ContactLine icon={Mail} text="systems@okanaganlighting.ca" />
             <ContactLine
               icon={Phone}
               text="Professional onboarding available upon request"
@@ -316,7 +316,7 @@ function ContactSection() {
 
           <div className="mt-10 border-t border-white/10 pt-8">
             <a
-              href="https://okanaganlighting.com"
+              href="https://okanaganlighting.ca"
               className="inline-flex text-sm tracking-[0.18em] text-white/70 transition hover:text-[#E2B15A]"
             >
               Explore Okanagan Lighting →
