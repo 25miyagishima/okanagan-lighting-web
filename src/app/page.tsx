@@ -116,7 +116,7 @@ function HomeSection() {
             SUMMERLAND, BRITISH COLUMBIA
           </p>
 
-          <h1 className="max-w-5xl text-5xl font-bold leading-[0.95] tracking-[-0.055em] text-[#F3EEE7] md:text-7xl lg:text-8xl">
+          <h1 className="max-w-5xl text-4xl font-bold leading-[0.95] tracking-[-0.055em] text-[#F3EEE7] md:text-6xl lg:text-7xl">
             Electrical contracting for homes, businesses, and lighting projects
             throughout the Okanagan.
           </h1>
