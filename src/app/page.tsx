@@ -3,20 +3,20 @@ import { Mail, MapPin, Phone, type LucideIcon } from "lucide-react";
 
 const navItems = [
   { href: "#home", label: "HOME" },
-  { href: "#professional-access", label: "PROFESSIONAL ACCESS" },
+  { href: "/about", label: "ABOUT" },
+  { href: "#operate", label: "HOW WE OPERATE" },
+  { href: "#services", label: "SERVICES" },
+  { href: "/consultation", label: "CONSULTATION" },
   { href: "#contact", label: "CONTACT" },
 ];
 
 function HeroBackdrop({ opacity = "opacity-100" }: { opacity?: string }) {
   return (
     <div className={`absolute inset-0 ${opacity}`} aria-hidden="true">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_43%,rgba(216,139,45,.16),transparent_18%),linear-gradient(180deg,#030405_0%,#0D0E10_100%)] md:bg-[radial-gradient(circle_at_72%_43%,rgba(216,139,45,.18),transparent_18%),linear-gradient(180deg,#030405_0%,#0D0E10_100%)]" />
-      <div className="absolute inset-x-0 top-[20%] h-[26%] bg-[linear-gradient(178deg,transparent_0%,transparent_42%,rgba(0,0,0,.98)_43%,rgba(0,0,0,.98)_100%)]" />
-      <div className="absolute inset-x-0 top-[28%] h-[28%] bg-[radial-gradient(ellipse_at_center,rgba(216,139,45,.18),transparent_42%)] blur-sm md:bg-[radial-gradient(ellipse_at_center,rgba(216,139,45,.28),transparent_42%)]" />
-      <div className="absolute inset-x-0 top-[34%] h-[2px] bg-gradient-to-r from-transparent via-[#D88B2D]/60 to-transparent blur-[1px]" />
-      <div className="absolute bottom-0 right-0 h-[48%] w-[58%] rounded-tl-[8rem] bg-[linear-gradient(135deg,rgba(18,20,22,.95),rgba(3,4,5,.98))] shadow-[0_0_90px_rgba(0,0,0,.9)]" />
-      <div className="absolute bottom-[16%] right-[6%] h-[17%] w-[42%] bg-[linear-gradient(90deg,transparent,rgba(216,139,45,.35),transparent)] blur-xl" />
-      <div className="absolute bottom-[7%] left-0 h-[32%] w-full bg-gradient-to-t from-black via-black/80 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_20%,rgba(184,132,78,.12),transparent_28%),linear-gradient(180deg,#141718_0%,#181B1C_48%,#1F2223_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_78%,rgba(184,132,78,.07),transparent_34%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/28 via-black/8 to-transparent" />
+      <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent_0%,transparent_47%,rgba(255,255,255,.025)_47.1%,transparent_47.7%)]" />
     </div>
   );
 }
@@ -25,70 +25,15 @@ function Logo() {
   return (
     <a
       href="#home"
-      className="relative z-20 flex flex-col items-center leading-none transition-opacity duration-300 hover:opacity-90"
+      className="relative z-20 flex flex-col leading-none transition-opacity duration-300 hover:opacity-90"
       aria-label="Go to home section"
     >
-      <div className="-mb-4 flex h-14 w-56 justify-center md:h-16 md:w-64 lg:h-20 lg:w-72">
-        <svg
-          viewBox="240 285 1220 190"
-          className="h-full w-full overflow-visible"
-          aria-hidden="true"
-        >
-          <defs>
-            <linearGradient id="ridgeGold" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#8A5200" stopOpacity="0" />
-              <stop offset="18%" stopColor="#D99313" />
-              <stop offset="50%" stopColor="#FFF4C2" />
-              <stop offset="82%" stopColor="#D99313" />
-              <stop offset="100%" stopColor="#8A5200" stopOpacity="0" />
-            </linearGradient>
-
-            <filter id="ridgeGlow">
-              <feGaussianBlur stdDeviation="6" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          <path
-            d="M250 386
-               C360 350, 475 326, 565 318
-               C642 312, 690 330, 760 318
-               C820 308, 860 280, 920 282
-               C990 284, 1050 318, 1202 326
-               C1285 328, 1355 340, 1450 388"
-            fill="none"
-            stroke="url(#ridgeGold)"
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            filter="url(#ridgeGlow)"
-          />
-
-          <path
-            d="M250 386
-               C360 350, 475 326, 565 318
-               C642 312, 690 330, 760 318
-               C820 308, 860 280, 920 282
-               C990 284, 1050 318, 1202 326
-               C1285 328, 1355 340, 1450 388"
-            fill="none"
-            stroke="#FFE8A3"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+      <div className="text-[13px] font-semibold tracking-[0.24em] text-[#F3EEE7] md:text-sm">
+        GIANTS HEAD
       </div>
 
-      <div className="-mt-3 font-serif text-[22px] tracking-[0.31em] text-[#FFF9EA] drop-shadow-[0_0_10px_rgba(255,249,234,.18)] md:text-[25px] lg:text-[28px]">
-        OKANAGAN
-      </div>
-
-      <div className="mt-[2px] text-center text-[13px] tracking-[0.42em] text-[#D99A18] md:text-[14px] lg:text-[15px]">
-        LIGHTING
+      <div className="mt-1 text-[10px] tracking-[0.32em] text-[#B8844E] md:text-[11px]">
+        ELECTRICAL CONTRACTING LTD.
       </div>
     </a>
   );
@@ -96,7 +41,7 @@ function Logo() {
 
 function Nav() {
   return (
-    <header className="fixed left-0 right-0 top-0 z-20 flex items-center justify-between bg-[#0D0E10]/40 px-6 py-5 backdrop-blur-md md:px-12 lg:px-16">
+    <header className="fixed left-0 right-0 top-0 z-30 flex items-center justify-between border-b border-white/10 bg-[#111315]/95 px-6 py-5 backdrop-blur-xl md:px-12 lg:px-16">
       <Logo />
 
       <nav className="hidden items-center md:flex" aria-label="Main navigation">
@@ -104,12 +49,12 @@ function Nav() {
           {navItems.map((item, index) => (
             <div key={item.href} className="flex items-center gap-4 lg:gap-5">
               {index !== 0 && (
-                <span className="text-[13px] text-white/45">·</span>
+                <span className="text-[13px] text-white/30">·</span>
               )}
 
               <a
                 href={item.href}
-                className="text-xs tracking-[0.18em] text-white transition-colors duration-300 hover:text-[#E2B15A] lg:text-sm"
+                className="text-xs tracking-[0.18em] text-white/70 transition-colors duration-300 hover:text-[#B8844E] lg:text-sm"
               >
                 {item.label}
               </a>
@@ -121,28 +66,39 @@ function Nav() {
   );
 }
 
-function Feature({
-  icon,
+function SectionShell({
+  id,
+  eyebrow,
   title,
   children,
 }: {
-  icon: ReactNode;
-  title: string;
+  id: string;
+  eyebrow: string;
+  title: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <article className="flex min-h-32 items-start gap-7 border-white/20 pr-8 md:border-r md:last:border-r-0">
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#D88B2D]/70 text-3xl text-[#D88B2D] shadow-[0_0_18px_rgba(216,139,45,.12)]">
-        {icon}
-      </div>
+    <section
+      id={id}
+      className="relative scroll-mt-28 overflow-hidden border-b border-white/10 bg-[#181B1C] px-6 py-20 text-white md:px-12 md:py-24 lg:px-16"
+    >
+      <HeroBackdrop opacity="opacity-35" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#141718]/92 via-[#181B1C]/86 to-[#1F2223]/72" />
 
-      <div>
-        <h3 className="mb-4 tracking-[0.14em] text-[#E2B15A]">{title}</h3>
-        <p className="max-w-sm text-lg leading-relaxed text-white/80">
-          {children}
-        </p>
+      <div className="relative z-10 mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.75fr_1.55fr] lg:gap-20">
+        <div>
+          <p className="mb-5 text-xs font-semibold tracking-[0.22em] text-[#B8844E]">
+            {eyebrow}
+          </p>
+
+          <h2 className="max-w-2xl text-4xl font-semibold leading-[1.03] tracking-[-0.04em] text-[#F3EEE7] md:text-5xl lg:text-6xl">
+            {title}
+          </h2>
+        </div>
+
+        <div>{children}</div>
       </div>
-    </article>
+    </section>
   );
 }
 
@@ -150,181 +106,351 @@ function HomeSection() {
   return (
     <section
       id="home"
-      className="relative min-h-screen overflow-hidden bg-[#0D0E10] text-white"
+      className="relative min-h-screen overflow-hidden bg-[#181B1C] text-white"
     >
       <HeroBackdrop />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/12 to-black/10" />
 
-      <div className="relative z-10 flex min-h-screen flex-col justify-end px-6 pb-8 pt-36 md:px-12 lg:px-16">
-        <section className="mb-16 max-w-4xl lg:mb-20">
-          <h1 className="font-serif text-5xl leading-[1.05] tracking-[-0.04em] text-white drop-shadow-[0_0_12px_rgba(255,255,255,.12)] md:text-7xl lg:text-8xl">
-            Architectural Lighting Systems
-            <br />
-            for Elevated Living
+      <div className="relative z-10 flex min-h-screen flex-col justify-center px-6 pb-16 pt-36 md:px-12 lg:px-16">
+        <div className="max-w-7xl">
+          <p className="mb-7 text-xs font-semibold tracking-[0.22em] text-[#B8844E]">
+            SUMMERLAND, BRITISH COLUMBIA
+          </p>
+
+          <h1 className="max-w-5xl text-5xl font-bold leading-[0.95] tracking-[-0.055em] text-[#F3EEE7] md:text-7xl lg:text-8xl">
+            Electrical contracting for homes, businesses, and lighting projects
+            throughout the Okanagan.
           </h1>
 
-          <p className="mt-8 max-w-2xl text-xl leading-relaxed text-white/90 md:mt-10 md:text-2xl">
-            Designed to enhance architecture, atmosphere, and the way spaces are experienced.
+          <p className="mt-8 max-w-3xl text-xl leading-relaxed text-[#C8C0B6] md:mt-10 md:text-2xl">
+            Thoughtful planning. Clear communication. Professional execution.
           </p>
-        </section>
 
-        <section className="grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-3">
-          <Feature icon="⌬" title="DESIGN FOCUSED">
-            Curated lighting plans designed for how each space is lived in.
-          </Feature>
+          <p className="mt-7 text-xs font-semibold tracking-[0.18em] text-[#B8844E]">
+            PROUDLY ROOTED IN SUMMERLAND, SERVING THE OKANAGAN.
+          </p>
 
-          <Feature icon="△" title="TECHNOLOGY DRIVEN">
-            Advanced systems and intelligent controls for seamless performance.
-          </Feature>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <a
+              href="/consultation"
+              className="inline-flex min-h-12 items-center justify-center border border-[#D8C8B6] bg-[#D8C8B6] px-6 text-xs font-bold tracking-[0.14em] text-[#151718] transition hover:border-[#EFE4D3] hover:bg-[#EFE4D3]"
+            >
+              REQUEST A CONSULTATION
+            </a>
 
-          <Feature icon="◎" title="PREMIUM EXPERIENCE">
-            Catered service from concept to completion and beyond.
-          </Feature>
-        </section>
-      </div>
-    </section>
-  );
-}
-
-function SectionShell({
-  id,
-  children,
-}: {
-  id: string;
-  children: ReactNode;
-}) {
-  return (
-    <section
-      id={id}
-      className="relative scroll-mt-28 overflow-hidden bg-[#0D0E10] px-6 py-16 text-white md:px-12 md:py-20 lg:px-16"
-    >
-      <HeroBackdrop opacity="opacity-45" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/45" />
-
-      <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="max-w-4xl rounded-3xl border border-white/10 bg-[#0D0E10]/75 p-7 shadow-[0_20px_80px_rgba(0,0,0,.45)] backdrop-blur-md md:p-9 lg:p-12">
-          {children}
+            <a
+              href="#operate"
+              className="inline-flex min-h-12 items-center justify-center border border-[#B8844E]/60 bg-white/[0.02] px-6 text-xs font-bold tracking-[0.14em] text-white transition hover:border-[#B8844E] hover:bg-[#B8844E]/10"
+            >
+              HOW WE OPERATE
+            </a>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function ProcessSection() {
+function ProcessCard({
+  number,
+  title,
+  children,
+}: {
+  number: string;
+  title: string;
+  children: ReactNode;
+}) {
   return (
-    <SectionShell id="process">
-      <p className="mb-5 tracking-[0.22em] text-[#D88B2D]">
-        ABOUT OKANAGAN LIGHTING
+    <article className="border-t border-white/10 pt-6">
+      <p className="mb-5 text-xs font-bold tracking-[0.16em] text-[#B8844E]">
+        {number}
       </p>
 
-      <h2 className="font-serif text-4xl leading-tight md:text-6xl">
-        Thoughtfully Designed Lighting
-        <br />
-        for Spaces Meant to Be Lived In.
-      </h2>
+      <h3 className="mb-4 text-base font-semibold tracking-[0.12em] text-[#F3EEE7]">
+        {title}
+      </h3>
 
-      <p className="mt-7 text-lg leading-relaxed text-white/78 md:text-xl">
-        Okanagan Lighting creates thoughtfully designed lighting environments for homes,
-        outdoor living spaces, hospitality properties, and select commercial environments
-        throughout the Okanagan.
+      <div className="space-y-4 text-base leading-relaxed text-[#C8C0B6] md:text-[17px]">
+        {children}
+      </div>
+    </article>
+  );
+}
+
+function HowWeOperateSection() {
+  return (
+    <SectionShell
+      id="operate"
+      eyebrow="HOW WE OPERATE"
+      title={
+        <>
+          Understand. Plan. Execute. Improve.
+        </>
+      }
+    >
+      <p className="max-w-3xl text-xl leading-relaxed text-[#C8C0B6]">
+        Every project follows a simple principle: understand the situation
+        before acting.
       </p>
 
-      <p className="mt-5 text-lg leading-relaxed text-white/78 md:text-xl">
-        Every project begins with conversation, collaboration, and understanding how a
-        space is experienced day to day. From quiet exterior ambiance to warm interior
-        lighting, each system is carefully designed to feel natural, refined, and
-        effortless within the space.
-      </p>
+      <div className="mt-11 grid gap-9 md:grid-cols-2">
+        <ProcessCard number="01" title="UNDERSTAND">
+          <p>
+            Every project begins with understanding the customer, the space, and
+            the objectives behind the work.
+          </p>
 
-      <p className="mt-5 text-lg leading-relaxed text-white/78 md:text-xl">
-        Behind the scenes, organized planning, reliable systems, and years of installation
-        experience ensure every detail is executed with care — allowing the customer
-        experience itself to remain calm, personal, and approachable.
-      </p>
+          <p>
+            Before recommendations are made, time is spent identifying
+            requirements, priorities, constraints, and opportunities.
+          </p>
+        </ProcessCard>
 
-      <div className="mt-10 border-t border-white/10 pt-8">
-        <p className="mb-4 tracking-[0.22em] text-[#D88B2D]">OUR APPROACH</p>
+        <ProcessCard number="02" title="PLAN">
+          <p>
+            Information is organized, requirements are documented, and solutions
+            are developed with the project goals in mind.
+          </p>
 
-        <p className="max-w-2xl text-xl leading-relaxed text-white/86 md:text-2xl">
-          Lighting should feel effortless. Every system is carefully considered to enhance
-          atmosphere, comfort, and the overall experience of a space.
-        </p>
+          <p>Planning helps create a clear path before work begins.</p>
+        </ProcessCard>
+
+        <ProcessCard number="03" title="EXECUTE">
+          <p>
+            Projects are delivered safely, professionally, and with attention to
+            detail.
+          </p>
+
+          <p>
+            Clear communication, preparation, and organization help ensure
+            expectations remain aligned throughout the project.
+          </p>
+        </ProcessCard>
+
+        <ProcessCard number="04" title="IMPROVE">
+          <p>Every completed project creates experience.</p>
+
+          <p>
+            Lessons learned help refine future decisions, improve workflows, and
+            strengthen project delivery over time.
+          </p>
+        </ProcessCard>
       </div>
     </SectionShell>
   );
 }
 
-function ProfessionalAccessSection() {
+function ServiceRow({
+  title,
+  label,
+  children,
+}: {
+  title: string;
+  label: string;
+  children: ReactNode;
+}) {
   return (
-    <SectionShell id="professional-access">
-      <p className="mb-5 tracking-[0.22em] text-[#D88B2D]">
-        OKANAGAN LIGHTING SYSTEMS
+    <article className="grid gap-4 border-b border-white/10 py-8 first:border-t md:grid-cols-[0.34fr_1fr_auto] md:gap-8">
+      <h3 className="text-base font-semibold tracking-[0.12em] text-[#F3EEE7]">
+        {title}
+      </h3>
+
+      <div className="max-w-2xl text-base leading-relaxed text-[#C8C0B6] md:text-[17px]">
+        {children}
+      </div>
+
+      <span className="h-fit border border-white/10 px-3 py-2 text-[10px] font-semibold tracking-[0.12em] text-white/50">
+        {label}
+      </span>
+    </article>
+  );
+}
+
+function ServicesSection() {
+  return (
+    <SectionShell
+      id="services"
+      eyebrow="SERVICES"
+      title="Current services. Future capability."
+    >
+      <p className="max-w-3xl text-xl leading-relaxed text-[#C8C0B6]">
+        The company currently provides electrical and lighting services.
+        Automation remains a future area of professional development and service
+        expansion.
       </p>
 
-      <h2 className="font-serif text-4xl leading-tight md:text-6xl">
-        Professional Access
-        <br />
-        to the Systems Platform.
-      </h2>
+      <div className="mt-11">
+        <ServiceRow title="ELECTRICAL CONTRACTING" label="CORE SERVICE">
+          <p>
+            Residential and commercial electrical services delivered with
+            preparation, organization, and attention to detail.
+          </p>
+        </ServiceRow>
 
-      <p className="mt-7 text-lg leading-relaxed text-white/78 md:text-xl">
-        Okanagan Lighting Systems serves as the operational backbone behind the customer
-        experience — providing organized workflows, project systems, and lighting tools
-        developed for professionals in the field.
+        <ServiceRow title="LIGHTING" label="SPECIALIZED SERVICE">
+          <p>
+            Indoor and outdoor lighting projects designed around how spaces are
+            used, experienced, and enjoyed.
+          </p>
+
+          <a
+            href="https://okanaganlighting.ca"
+            className="mt-5 inline-flex text-sm font-semibold tracking-[0.12em] text-[#B8844E] transition hover:text-[#EFE4D3]"
+          >
+            LEARN MORE ABOUT GIANTS HEAD LIGHTING →
+          </a>
+        </ServiceRow>
+
+        <ServiceRow title="AUTOMATION" label="FUTURE DEVELOPMENT">
+          <p>
+            Smart controls and automation systems are an area of ongoing
+            professional development and future service expansion.
+          </p>
+        </ServiceRow>
+      </div>
+    </SectionShell>
+  );
+}
+
+function ApproachCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <article className="border-t border-white/10 pt-6">
+      <h3 className="mb-4 text-base font-semibold tracking-[0.12em] text-[#F3EEE7]">
+        {title}
+      </h3>
+
+      <p className="text-base leading-relaxed text-[#C8C0B6] md:text-[17px]">
+        {children}
       </p>
+    </article>
+  );
+}
 
-      <p className="mt-5 text-lg leading-relaxed text-white/78 md:text-xl">
-        Designed for builders, installers, landscape companies, and lighting professionals,
-        the platform supports planning, quoting, installation organization, and long-term
-        project management while maintaining the calm and thoughtful experience clients
-        expect from Okanagan Lighting.
+function ApproachSection() {
+  return (
+    <SectionShell
+      id="approach"
+      eyebrow="OUR APPROACH"
+      title="Planning, communication, and execution."
+    >
+      <div className="grid gap-9 md:grid-cols-3">
+        <ApproachCard title="THOUGHTFUL PLANNING">
+          Every project begins with understanding the customer, the space, and
+          the requirements before solutions are developed.
+        </ApproachCard>
+
+        <ApproachCard title="CLEAR COMMUNICATION">
+          Clear expectations and consistent communication help projects run
+          smoothly from start to finish.
+        </ApproachCard>
+
+        <ApproachCard title="PROFESSIONAL EXECUTION">
+          Projects are delivered safely, professionally, and with attention to
+          detail.
+        </ApproachCard>
+      </div>
+    </SectionShell>
+  );
+}
+
+function CommunitySection() {
+  return (
+    <SectionShell
+      id="community"
+      eyebrow="COMMUNITY"
+      title="Proudly rooted in Summerland, serving the Okanagan."
+    >
+      <p className="max-w-3xl text-xl leading-relaxed text-[#C8C0B6]">
+        Built on relationships, professionalism, and continuous improvement, we
+        are proud to serve the homeowners, businesses, and communities that make
+        the Okanagan home.
       </p>
-
-      <a
-        href="/professional-access"
-        className="mt-10 inline-flex rounded-sm border border-[#D88B2D]/40 bg-white/5 px-8 py-4 font-semibold tracking-[0.14em] text-white shadow-[0_0_24px_rgba(216,139,45,.08)] transition hover:border-[#D88B2D]/70 hover:bg-[#D88B2D]/10 hover:shadow-[0_0_32px_rgba(216,139,45,.18)]"
-      >
-        REQUEST PLATFORM ACCESS
-      </a>
     </SectionShell>
   );
 }
 
 function ContactSection() {
   return (
-    <section
+    <SectionShell
       id="contact"
-      className="relative scroll-mt-28 overflow-hidden bg-[#0D0E10] px-6 py-16 text-white md:px-12 md:py-20 lg:px-16"
+      eyebrow="CONTACT"
+      title="Request a consultation."
     >
-      <HeroBackdrop opacity="opacity-40" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/50" />
+      <p className="max-w-3xl text-xl leading-relaxed text-[#C8C0B6]">
+        For electrical work, lighting projects, or future project discussions,
+        reach out and define the next step.
+      </p>
 
-      <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="max-w-4xl rounded-3xl border border-white/10 bg-[#0D0E10]/75 p-7 shadow-[0_20px_80px_rgba(0,0,0,.45)] backdrop-blur-md md:p-9 lg:p-12">
-          <p className="mb-5 tracking-[0.22em] text-[#D88B2D]">
-            PLATFORM ACCESS
+      <div className="mt-10 space-y-5 text-base text-white/85 md:text-lg">
+        <ContactLine icon={Mail} text="hello@giantsheadelectric.ca" />
+        <ContactLine icon={Phone} text="Consultations available upon request" />
+        <ContactLine icon={MapPin} text="Summerland, British Columbia" />
+      </div>
+    </SectionShell>
+  );
+}
+
+function FooterSection() {
+  return (
+    <footer className="relative overflow-hidden bg-[#141718] px-6 py-14 text-white md:px-12 lg:px-16">
+      <div className="mx-auto grid max-w-7xl gap-10 text-sm text-white/55 md:grid-cols-[1.3fr_1fr_1fr]">
+        <div>
+          <h2 className="mb-4 text-base font-semibold tracking-[0.16em] text-white">
+            GIANTS HEAD ELECTRICAL CONTRACTING LTD.
+          </h2>
+
+          <p>Electrical • Lighting</p>
+          <p>Summerland, British Columbia</p>
+          <p>Serving the Okanagan</p>
+        </div>
+
+        <div>
+          <h3 className="mb-4 text-sm font-semibold tracking-[0.16em] text-white">
+            NAVIGATION
+          </h3>
+
+          <div className="space-y-2">
+            <a href="#operate" className="block transition hover:text-[#B8844E]">
+              How We Operate
+            </a>
+            <a href="#services" className="block transition hover:text-[#B8844E]">
+              Services
+            </a>
+            <a href="/consultation" className="block transition hover:text-[#B8844E]">
+              Consultation
+            </a>
+            <a href="#contact" className="block transition hover:text-[#B8844E]">
+              Contact
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-4 text-sm font-semibold tracking-[0.16em] text-white">
+            OPERATIONAL SYSTEMS
+          </h3>
+
+          <p className="max-w-sm leading-relaxed">
+            Learn how Giants Head Electrical Contracting documents, validates,
+            and improves project delivery.
           </p>
 
-          <div className="space-y-5 text-base text-white/85 md:text-lg">
-            <ContactLine icon={Mail} text="systems@okanaganlighting.ca" />
-            <ContactLine
-              icon={Phone}
-              text="Professional onboarding available upon request"
-            />
-            <ContactLine icon={MapPin} text="Okanagan, British Columbia" />
-          </div>
-
-          <div className="mt-10 border-t border-white/10 pt-8">
-            <a
-              href="https://okanaganlighting.ca"
-              className="inline-flex text-sm tracking-[0.18em] text-white/70 transition hover:text-[#E2B15A]"
-            >
-              Explore Okanagan Lighting →
+          <div className="mt-5 space-y-2">
+            <a href="/operational-systems" className="block transition hover:text-[#B8844E]">
+              Operational Systems →
+            </a>
+            <a href="/professional-access" className="block transition hover:text-[#B8844E]">
+              Professional Access →
             </a>
           </div>
         </div>
       </div>
-    </section>
+    </footer>
   );
 }
 
@@ -337,20 +463,23 @@ function ContactLine({
 }) {
   return (
     <div className="flex items-center gap-4">
-      <Icon className="h-5 w-5 shrink-0 text-[#D88B2D]" />
+      <Icon className="h-5 w-5 shrink-0 text-[#B8844E]" />
       <span>{text}</span>
     </div>
   );
 }
 
-export default function OkanaganLightingSystemsHomepagePage() {
+export default function GiantsHeadElectricalHomepagePage() {
   return (
-    <main className="min-h-screen bg-[#0D0E10]">
+    <main className="min-h-screen bg-[#181B1C]">
       <Nav />
       <HomeSection />
-      <ProcessSection />
-      <ProfessionalAccessSection />
+      <HowWeOperateSection />
+      <ServicesSection />
+      <ApproachSection />
+      <CommunitySection />
       <ContactSection />
+      <FooterSection />
     </main>
   );
 }
