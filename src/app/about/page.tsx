@@ -258,8 +258,8 @@ function ContactSection() {
         <div className="space-y-5 border-t border-white/10 pt-8 text-base text-white/80 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0 md:text-lg">
           <ContactLine
             icon={Mail}
-            text="aaron@giantsheadelectric.ca"
-            href="mailto:aaron@giantsheadelectric.ca"
+            text="aaron@giantsheadelectrical.ca"
+            href="mailto:aaron@giantsheadelectrical.ca"
           />
 
           <ContactLine
@@ -361,7 +361,7 @@ function FooterSection() {
 
           <div className="space-y-2">
             <a
-              href="mailto:aaron@giantsheadelectric.ca"
+              href="mailto:aaron@giantsheadelectrical.ca"
               className="block transition hover:text-[#B8844E]"
             >
               Email

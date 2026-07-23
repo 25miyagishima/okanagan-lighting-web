@@ -105,7 +105,7 @@ export default function ConsultationPage() {
             <div>
               <p className="font-semibold tracking-[0.14em] text-[#F3EEE7]">GIANTS HEAD ELECTRICAL CONTRACTING LTD.</p>
               <div className="mt-4 space-y-2">
-                <div className="flex items-center gap-2"><Mail size={16}/> aaron@giantsheadelectric.ca</div>
+                <div className="flex items-center gap-2"><Mail size={16}/> aaron@giantsheadelectrical.ca</div>
                 <div className="flex items-center gap-2"><MapPin size={16}/> Summerland, British Columbia</div>
               </div>
             </div>
