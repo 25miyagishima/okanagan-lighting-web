@@ -2,22 +2,22 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://systems.okanaganlighting.ca"),
+  metadataBase: new URL("https://giantsheadelectrical.ca"),
 
   title: {
-    default: "Okanagan Lighting Systems",
-    template: "%s | Okanagan Lighting Systems",
+    default: "Giants Head Electrical Contracting Ltd.",
+    template: "%s | Giants Head Electrical Contracting Ltd.",
   },
 
   description:
-    "Professional lighting quote, job, invoice, and project workflow platform for Okanagan Lighting.",
+    "Professional residential, commercial, and lighting electrical services in Summerland and throughout the Okanagan.",
 
   openGraph: {
-    title: "Okanagan Lighting Systems",
+    title: "Giants Head Electrical Contracting Ltd.",
     description:
-      "Professional lighting quote, job, invoice, and project workflow platform for Okanagan Lighting.",
-    url: "https://systems.okanaganlighting.ca",
-    siteName: "Okanagan Lighting Systems",
+      "Professional residential, commercial, and lighting electrical services in Summerland and throughout the Okanagan.",
+    url: "https://giantsheadelectrical.ca",
+    siteName: "Giants Head Electrical Contracting Ltd.",
     locale: "en_CA",
     type: "website",
     images: ["/og-image.jpg"],
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Okanagan Lighting Systems",
+    title: "Giants Head Electrical Contracting Ltd.",
     description:
-      "Professional lighting quote, job, invoice, and project workflow platform for Okanagan Lighting.",
+      "Professional residential, commercial, and lighting electrical services in Summerland and throughout the Okanagan.",
     images: ["/og-image.jpg"],
   },
 };
