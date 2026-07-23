@@ -15,7 +15,7 @@ const navItems = [
 export function MobileNav() {
   const pathname = usePathname();
 
-  if (pathname === "/professional-access") return null;
+if (pathname === "/operations") return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0B0C0E]/95 px-3 py-2 backdrop-blur-xl lg:hidden">

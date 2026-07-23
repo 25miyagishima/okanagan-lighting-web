@@ -10,5 +10,5 @@ export async function signInWithEmailPassword() {
 }
 
 export async function signOut() {
-  redirect("/professional-access");
+  redirect("/operations");
 }
