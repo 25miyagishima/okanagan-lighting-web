@@ -2,9 +2,10 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 const navigation = [
-  { href: "#services", label: "SERVICES" },
+  { href: "/", label: "HOME" },
+  { href: "/#services", label: "SERVICES" },
   { href: "/about", label: "ABOUT" },
-  { href: "#contact", label: "CONTACT" },
+  { href: "/consultation", label: "CONTACT" },
 ];
 
 const services = [
@@ -90,33 +91,21 @@ function ConsultationButton({ compact = false }: { compact?: boolean }) {
 function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-[#111315]/95 backdrop-blur-xl">
-      <Container className="flex h-[76px] items-center justify-between">
-        <a
-          href="#home"
-          aria-label="Giants Head Electrical Contracting home"
-          className="text-xs font-semibold tracking-[0.22em] text-[#F3EEE7] transition-colors hover:text-[#B8844E]"
+      <Container className="flex h-[64px] items-center justify-center">
+        <nav
+          className="flex flex-wrap items-center justify-center gap-5 md:gap-8"
+          aria-label="Main navigation"
         >
-          GH
-        </a>
-
-        <div className="flex items-center gap-7">
-          <nav
-            className="hidden items-center gap-7 md:flex"
-            aria-label="Main navigation"
-          >
-            {navigation.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-xs tracking-[0.18em] text-white/65 transition-colors hover:text-[#B8844E]"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <ConsultationButton compact />
-        </div>
+          {navigation.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-[11px] font-medium tracking-[0.16em] text-white/65 transition-colors hover:text-[#B8844E]"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
       </Container>
     </header>
   );
@@ -126,7 +115,7 @@ function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen scroll-mt-24 items-center overflow-hidden bg-[#181B1C] pt-[76px] text-white"
+      className="relative flex min-h-screen scroll-mt-24 items-center overflow-hidden bg-[#181B1C] pt-16 text-white"
     >
       <Background />
 
@@ -274,53 +263,25 @@ function Contact() {
   );
 }
 
-function Footer() {
+function FooterSection() {
   return (
-    <footer className="border-t border-white/10 bg-[#111315] py-12 text-white">
-      <Container>
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
-          <div>
-            <p className="max-w-xl text-sm font-semibold tracking-[0.14em] text-[#F3EEE7]">
-              GIANTS HEAD ELECTRICAL CONTRACTING LTD.
-            </p>
-            <p className="mt-4 text-sm leading-6 text-white/40">
-              Summerland, British Columbia
-              <br />
-              Serving the Okanagan
-            </p>
-          </div>
+    <footer className="border-t border-white/10 bg-[#111315] px-6 py-10 text-white md:px-12 lg:px-16">
+      <div className="mx-auto flex max-w-7xl items-end justify-between">
+        <div>
 
-          <nav
-            aria-label="Footer navigation"
-            className="flex flex-wrap gap-x-6 gap-y-3 md:justify-end"
-          >
-            {navigation.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-xs tracking-[0.14em] text-white/45 transition-colors hover:text-[#B8844E]"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
+          <p className="mt-6 text-xs text-white/35">
+            © 2026 Giants Head Electrical Contracting Ltd.
+          </p>
         </div>
 
-<div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
-  <p className="text-xs text-white/30">
-    © 2026 Giants Head Electrical Contracting Ltd.
-  </p>
-
-  <Link
-    href="/operations"
-    aria-label="Operations"
-    title="Operations"
-    className="text-base leading-none text-white/15 transition-all duration-300 hover:scale-110 hover:text-[#B8844E] focus-visible:outline-none focus-visible:text-[#B8844E]"
-  >
-    •
-  </Link>
-</div>
-      </Container>
+        <a
+          href="/operations"
+          aria-label="Operations access"
+          className="text-lg leading-none text-[#B8844E]/20 transition duration-300 hover:text-[#B8844E]"
+        >
+          •
+        </a>
+      </div>
     </footer>
   );
 }
@@ -333,7 +294,7 @@ export default function GiantsHeadElectricalHomepagePage() {
       <Services />
       <WhatToExpect />
       <Contact />
-      <Footer />
+      <FooterSection />
     </main>
   );
 }
