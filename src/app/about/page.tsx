@@ -22,9 +22,9 @@ function Background({ opacity = "opacity-100" }: { opacity?: string }) {
 function Nav() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-[#111315]/95 backdrop-blur-xl">
-      <div className="mx-auto flex h-[64px] max-w-7xl items-center justify-center px-6 md:px-12 lg:px-16">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-center px-6 md:px-12 lg:px-16">
         <nav
-          className="flex flex-wrap items-center justify-center gap-5 md:gap-8"
+          className="flex items-center gap-6 md:gap-8"
           aria-label="Main navigation"
         >
           {navItems.map((item) => (
