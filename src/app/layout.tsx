@@ -20,7 +20,14 @@ export const metadata: Metadata = {
     siteName: "Giants Head Electrical Contracting Ltd.",
     locale: "en_CA",
     type: "website",
-    images: ["/og-image.jpg"],
+    images: [
+      {
+        url: "/brand/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Giants Head Electrical Contracting Ltd.",
+      },
+    ],
   },
 
   twitter: {
@@ -28,7 +35,7 @@ export const metadata: Metadata = {
     title: "Giants Head Electrical Contracting Ltd.",
     description:
       "Professional residential, commercial, and lighting electrical services in Summerland and throughout the Okanagan.",
-    images: ["/og-image.jpg"],
+    images: ["/brand/og-image.jpg"],
   },
 };
 
