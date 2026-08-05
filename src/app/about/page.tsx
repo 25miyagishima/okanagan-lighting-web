@@ -238,7 +238,11 @@ function FooterSection() {
             Summerland, British Columbia
           </p>
 
-          <p className="mt-6 text-xs text-white/35">
+          <p className="mt-4 text-xs text-white/45">
+            TSBC Licensed Electrical Contractor · LIC-00215594 
+          </p>
+
+          <p className="mt-4 text-xs text-white/35">
             © 2026 Giants Head Electrical Contracting Ltd.
           </p>
         </div>

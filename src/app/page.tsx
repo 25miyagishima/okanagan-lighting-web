@@ -269,9 +269,14 @@ function FooterSection() {
       <div className="mx-auto flex max-w-7xl items-end justify-between">
         <div>
 
-          <p className="mt-6 text-xs text-white/35">
+          <p className="text-xs text-white/45">
+            TSBC Licensed Electrical Contractor · LIC-00215594 
+          </p>
+
+          <p className="mt-2 text-xs text-white/35">
             © 2026 Giants Head Electrical Contracting Ltd.
           </p>
+
         </div>
 
         <a
